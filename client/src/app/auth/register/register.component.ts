@@ -14,9 +14,43 @@ export class RegisterComponent {
   submitted: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
-
-  // Added for launch car animation overlay
   launching: boolean = false;
+
+  // Username verification
+  usernameChecking: boolean = false;
+  usernameExists: boolean = false;
+  usernameVerified: boolean = false;
+
+  // Email verification
+  emailChecking: boolean = false;
+  emailExists: boolean = false;
+  emailAvailable: boolean = false;
+
+  // OTP states
+  otpSending: boolean = false;
+  otpSent: boolean = false;
+  otpSentMessage: string = '';
+  otpCode: string = '';
+  otpVerifying: boolean = false;
+  otpVerified: boolean = false;
+  otpError: string = '';
+  otpTimer: number = 0;
+  otpTimerInterval: any = null;
+
+  // Phone verification
+  phoneChecking: boolean = false;
+  phoneExists: boolean = false;
+  phoneVerified: boolean = false;
+
+  // ✅ Password validation states
+  passwordRules = {
+    minLength: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false
+  };
+  passwordTouched: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -26,9 +60,206 @@ export class RegisterComponent {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.pattern(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/
+      )]],
       contactNumber: ['', [Validators.pattern('^[0-9]{10}$')]],
       role: ['ADMIN', Validators.required]
+    });
+  }
+
+  // ✅ Check password rules in real-time
+  checkPasswordRules(): void {
+    this.passwordTouched = true;
+    const password = this.registerForm.get('password')?.value || '';
+
+    this.passwordRules = {
+      minLength: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[!@#$%^&*]/.test(password)
+    };
+  }
+
+  // ✅ Count passed rules (for strength bar)
+  get passedRules(): number {
+    const r = this.passwordRules;
+    return [r.minLength, r.uppercase, r.lowercase, r.number, r.special]
+      .filter(Boolean).length;
+  }
+
+  // Check username on blur
+  checkUsername(): void {
+    const username = this.registerForm.get('username')?.value?.trim();
+
+    this.usernameVerified = false;
+    this.usernameExists = false;
+
+    if (!username) {
+      return;
+    }
+
+    this.usernameChecking = true;
+
+    this.authService.checkUsername(username).subscribe({
+      next: (res: any) => {
+        this.usernameChecking = false;
+        this.usernameExists = res.exists;
+        this.usernameVerified = !res.exists;
+      },
+      error: () => {
+        this.usernameChecking = false;
+      }
+    });
+  }
+
+  // Check email on blur
+  checkEmail(): void {
+    const email = this.registerForm.get('email')?.value?.trim();
+
+    this.emailAvailable = false;
+    this.emailExists = false;
+    this.otpSent = false;
+    this.otpVerified = false;
+    this.otpCode = '';
+    this.otpError = '';
+    this.otpSentMessage = '';
+    this.stopOtpTimer();
+
+    if (!email || this.registerForm.get('email')?.invalid) {
+      return;
+    }
+
+    this.emailChecking = true;
+
+    this.authService.checkEmail(email).subscribe({
+      next: (res: any) => {
+        this.emailChecking = false;
+        this.emailExists = res.exists;
+        this.emailAvailable = !res.exists;
+      },
+      error: () => {
+        this.emailChecking = false;
+      }
+    });
+  }
+
+  // Send OTP
+  sendOtp(): void {
+    const email = this.registerForm.get('email')?.value?.trim();
+
+    if (!email || this.emailExists) {
+      return;
+    }
+
+    this.otpSending = true;
+    this.otpError = '';
+    this.otpSentMessage = '';
+
+    this.authService.sendOtp(email).subscribe({
+      next: (res: any) => {
+        this.otpSending = false;
+        this.otpSent = true;
+        this.otpSentMessage = 'OTP sent to ' + email;
+        this.startOtpTimer();
+      },
+      error: (error: any) => {
+        this.otpSending = false;
+
+        if (error?.error?.message) {
+          this.otpError = error.error.message;
+        } else {
+          this.otpError = 'Failed to send OTP. Please try again.';
+        }
+      }
+    });
+  }
+
+  // Verify OTP
+  verifyOtp(): void {
+    const email = this.registerForm.get('email')?.value?.trim();
+
+    if (!email || !this.otpCode || this.otpCode.length !== 6) {
+      this.otpError = 'Please enter a valid 6-digit OTP.';
+      return;
+    }
+
+    this.otpVerifying = true;
+    this.otpError = '';
+
+    this.authService.verifyOtp(email, this.otpCode).subscribe({
+      next: (res: any) => {
+        this.otpVerifying = false;
+
+        if (res.verified) {
+          this.otpVerified = true;
+          this.otpError = '';
+          this.stopOtpTimer();
+        } else {
+          this.otpVerified = false;
+          this.otpError = res.message || 'Invalid or expired OTP.';
+        }
+      },
+      error: () => {
+        this.otpVerifying = false;
+        this.otpError = 'Verification failed. Please try again.';
+      }
+    });
+  }
+
+  // Resend OTP
+  resendOtp(): void {
+    this.otpCode = '';
+    this.otpVerified = false;
+    this.otpError = '';
+    this.sendOtp();
+  }
+
+  // Timer for resend cooldown
+  startOtpTimer(): void {
+    this.otpTimer = 60;
+
+    this.otpTimerInterval = setInterval(() => {
+      this.otpTimer--;
+
+      if (this.otpTimer <= 0) {
+        this.stopOtpTimer();
+      }
+    }, 1000);
+  }
+
+  stopOtpTimer(): void {
+    if (this.otpTimerInterval) {
+      clearInterval(this.otpTimerInterval);
+      this.otpTimerInterval = null;
+    }
+
+    this.otpTimer = 0;
+  }
+
+  // Check phone on blur
+  checkPhone(): void {
+    const phone = this.registerForm.get('contactNumber')?.value?.trim();
+
+    this.phoneVerified = false;
+    this.phoneExists = false;
+
+    if (!phone || this.registerForm.get('contactNumber')?.invalid) {
+      return;
+    }
+
+    this.phoneChecking = true;
+
+    this.authService.checkPhone(phone).subscribe({
+      next: (res: any) => {
+        this.phoneChecking = false;
+        this.phoneExists = res.exists;
+        this.phoneVerified = !res.exists;
+      },
+      error: () => {
+        this.phoneChecking = false;
+      }
     });
   }
 
@@ -38,6 +269,26 @@ export class RegisterComponent {
     this.errorMessage = '';
 
     if (this.registerForm.invalid) {
+      return;
+    }
+
+    if (this.usernameExists) {
+      this.errorMessage = 'Username is already taken.';
+      return;
+    }
+
+    if (this.emailExists) {
+      this.errorMessage = 'Email is already registered.';
+      return;
+    }
+
+    if (!this.otpVerified) {
+      this.errorMessage = 'Please verify your email with OTP before registering.';
+      return;
+    }
+
+    if (this.phoneExists) {
+      this.errorMessage = 'Contact number is already registered.';
       return;
     }
 

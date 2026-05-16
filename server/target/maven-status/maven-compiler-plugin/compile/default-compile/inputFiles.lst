@@ -27,10 +27,12 @@
 /home/coder/app/server/src/main/java/com/edutech/service/InsuranceService.java
 /home/coder/app/server/src/main/java/com/edutech/controller/DriverController.java
 /home/coder/app/server/src/main/java/com/edutech/exception/GlobalExceptionHandler.java
+/home/coder/app/server/src/main/java/com/edutech/service/OtpService.java
 /home/coder/app/server/src/main/java/com/edutech/repository/MaintenanceRecordRepository.java
 /home/coder/app/server/src/main/java/com/edutech/service/UserService.java
 /home/coder/app/server/src/main/java/com/edutech/controller/MaintenanceRecordController.java
 /home/coder/app/server/src/main/java/com/edutech/exception/InvalidDataException.java
+/home/coder/app/server/src/main/java/com/edutech/service/EmailService.java
 /home/coder/app/server/src/main/java/com/edutech/service/MaintenanceRecordService.java
 /home/coder/app/server/src/main/java/com/edutech/entity/Role.java
 /home/coder/app/server/src/main/java/com/edutech/dto/VehicleDTO.java

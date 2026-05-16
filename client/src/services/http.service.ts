@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 export class HttpService {
   public serverName = environment.apiUrl;
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   private getHeaders(): HttpHeaders {
     const token = this.authService.getToken();
@@ -154,17 +154,26 @@ export class HttpService {
     );
   }
 
-filterDriverByAvailability(status: string): Observable<any[]> {
-  return this.http.get<any[]>(
-    `${this.serverName}/api/drivers/filter/availability?status=${status}`,
-    { headers: this.getHeaders() }
-  );
-}
+  filterDriverByAvailability(status: string): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.serverName}/api/drivers/filter/availability?status=${status}`,
+      { headers: this.getHeaders() }
+    );
+  }
 
   sortDriversByExperience(order: string): Observable<any[]> {
     return this.http.get<any[]>(
       `${this.serverName}/api/drivers/sort/experience?order=${order}`,
       { headers: this.getHeaders() }
+    );
+  }
+
+  // ✅ NEW — Driver updates own status
+  updateDriverStatus(driverName: string, status: string): Observable<any> {
+    return this.http.put<any>(
+      `${this.serverName}/api/drivers/my-status?driverName=${driverName}&status=${status}`,
+      {},
+      { headers: this.getJsonHeaders() }
     );
   }
 

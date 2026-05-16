@@ -10,7 +10,7 @@ import { LoginResponse } from '../model/login-response';
 export class AuthService {
   public serverName = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(
@@ -133,5 +133,66 @@ export class AuthService {
     }
 
     return new HttpHeaders();
+  }
+
+  // ✅ NEW — Check if username already exists
+  checkUsername(username: string): Observable<any> {
+    return this.http.get<any>(
+      `${this.serverName}/api/auth/check-username?username=${username}`
+    );
+  }
+
+  // ✅ NEW — Check if email already exists
+  checkEmail(email: string): Observable<any> {
+    return this.http.get<any>(
+      `${this.serverName}/api/auth/check-email?email=${email}`
+    );
+  }
+
+  // ✅ NEW — Check if contact number already exists
+  checkPhone(contactNumber: string): Observable<any> {
+    return this.http.get<any>(
+      `${this.serverName}/api/auth/check-phone?contactNumber=${contactNumber}`
+    );
+  }
+
+  // ✅ NEW — Send OTP to email
+  sendOtp(email: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.serverName}/api/auth/send-otp?email=${email}`,
+      {}
+    );
+  }
+
+  // ✅ NEW — Verify OTP
+  verifyOtp(email: string, otp: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.serverName}/api/auth/verify-otp?email=${email}&otp=${otp}`,
+      {}
+    );
+  }
+
+  // ✅ NEW — Forgot Password: Send OTP
+  forgotPasswordSendOtp(email: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.serverName}/api/auth/forgot-password/send-otp?email=${email}`,
+      {}
+    );
+  }
+
+  // ✅ NEW — Forgot Password: Verify OTP
+  forgotPasswordVerifyOtp(email: string, otp: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.serverName}/api/auth/forgot-password/verify-otp?email=${email}&otp=${otp}`,
+      {}
+    );
+  }
+
+  // ✅ NEW — Reset Password
+  resetPassword(email: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.serverName}/api/auth/forgot-password/reset?email=${email}&newPassword=${newPassword}`,
+      {}
+    );
   }
 }

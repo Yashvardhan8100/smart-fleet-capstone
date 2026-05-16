@@ -3,7 +3,7 @@
   <div class="dashboard-header">
     <div>
       <h2>🚚 SmartFleet Pro Dashboard</h2>
-      <p>Fleet summary, maintenance alerts, and insurance expiry overview</p>
+      <p>Welcome, <strong>{{ username }}</strong> ({{ role }}) — Fleet summary and alerts</p>
     </div>
   </div>
 
@@ -11,8 +11,140 @@
     {{ errorMessage }}
   </div>
 
-  <!-- Summary Cards -->
-  <div class="summary-grid">
+  <!-- ============================================ -->
+  <!-- DRIVER ROLE — Premium Driver Dashboard       -->
+  <!-- ============================================ -->
+  <div *ngIf="role === 'DRIVER'" class="driver-dashboard">
+
+    <!-- Driver Profile + Clock Row -->
+    <div class="driver-top-row">
+
+      <!-- Profile Card -->
+      <div class="driver-profile-card">
+        <div class="profile-avatar">
+          {{ username?.charAt(0)?.toUpperCase() }}
+        </div>
+        <div class="profile-info">
+          <h3>{{ username }}</h3>
+          <span class="role-chip">🚗 DRIVER</span>
+        </div>
+      </div>
+
+      <!-- Live Clock Card -->
+      <div class="driver-clock-card">
+        <div class="clock-time">{{ currentTime }}</div>
+        <div class="clock-date">{{ currentDate }}</div>
+        <div class="clock-label">
+          <span class="live-pulse"></span> Live Session
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Status Toggle Card -->
+    <div class="driver-status-card">
+
+      <div class="status-card-header">
+        <div>
+          <h4>⚡ Availability Status</h4>
+          <p>Toggle your current availability for fleet assignments</p>
+        </div>
+
+        <div class="status-indicator" [class.status-available]="driverStatus === 'Available'"
+          [class.status-assigned]="driverStatus === 'Assigned'">
+          {{ driverStatus }}
+        </div>
+      </div>
+
+      <div class="status-toggle-section">
+
+        <!-- Status Options -->
+        <div class="status-options">
+
+          <button type="button" class="status-option" [class.active-available]="driverStatus === 'Available'"
+            (click)="driverStatus = 'Available'">
+            🟢 Available
+          </button>
+
+          <button type="button" class="status-option" [class.active-assigned]="driverStatus === 'Assigned'"
+            (click)="driverStatus = 'Assigned'">
+            📌 Assigned
+          </button>
+
+        </div>
+
+        <!-- Update Button -->
+        <button type="button" class="status-update-btn" (click)="toggleDriverStatus()">
+          Update My Status
+        </button>
+
+      </div>
+
+      <!-- Status Messages -->
+      <div class="status-success" *ngIf="driverStatusMessage">
+        ✅ {{ driverStatusMessage }}
+      </div>
+
+      <div class="status-error" *ngIf="driverStatusError">
+        ⚠️ {{ driverStatusError }}
+      </div>
+
+    </div>
+
+    <!-- Driver Info Grid -->
+    <div class="driver-info-grid">
+
+      <div class="driver-info-item">
+        <div class="info-icon icon-blue">🚚</div>
+        <div>
+          <strong>Assigned Vehicle</strong>
+          <p>Contact Fleet Manager</p>
+        </div>
+      </div>
+
+      <div class="driver-info-item">
+        <div class="info-icon icon-green">🛡️</div>
+        <div>
+          <strong>Session Secured</strong>
+          <p>JWT Token Active</p>
+        </div>
+      </div>
+
+      <div class="driver-info-item">
+        <div class="info-icon icon-orange">📋</div>
+        <div>
+          <strong>Fleet Team</strong>
+          <p>SmartFleet Pro Network</p>
+        </div>
+      </div>
+
+      <div class="driver-info-item">
+        <div class="info-icon icon-purple">📡</div>
+        <div>
+          <strong>Live Tracking</strong>
+          <p>GPS Connected</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tips Card -->
+    <div class="driver-tips-card">
+      <h4>💡 Driver Tips</h4>
+      <ul>
+        <li>Set your status to <strong>Available</strong> when ready for new assignments.</li>
+        <li>Switch to <strong>Assigned</strong> once you receive a vehicle assignment.</li>
+        <li>Contact your <strong>Fleet Manager</strong> for route changes or vehicle issues.</li>
+        <li>Keep your profile updated for smooth fleet operations.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ADMIN + FLEET_MANAGER — Vehicle Cards        -->
+  <!-- ============================================ -->
+  <div class="summary-grid" *ngIf="role === 'ADMIN' || role === 'FLEET_MANAGER'">
 
     <div class="summary-card card-blue">
       <div class="card-icon">🚚</div>
@@ -70,7 +202,7 @@
       </div>
     </div>
 
-    <div class="summary-card card-red">
+    <div class="summary-card card-red" *ngIf="role === 'ADMIN'">
       <div class="card-icon">📄</div>
       <div>
         <h3>{{ totalInsuranceRecords }}</h3>
@@ -80,62 +212,95 @@
 
   </div>
 
-  <!-- Alert Section -->
-  <div class="alert-section">
+  <!-- ============================================ -->
+  <!-- MECHANIC — Maintenance Cards Only            -->
+  <!-- ============================================ -->
+  <div class="summary-grid" *ngIf="role === 'MECHANIC'">
 
-    <div class="info-card maintenance-alert">
-      <div class="info-card-header">
-        <h4>🛠️ Upcoming Services</h4>
-        <span class="badge badge-warning">{{ upcomingServices }}</span>
+    <div class="summary-card card-orange">
+      <div class="card-icon">⚙️</div>
+      <div>
+        <h3>{{ totalMaintenanceRecords }}</h3>
+        <p>Total Maintenance Records</p>
       </div>
-
-      <p>
-        Maintenance records with next service date within the next 30 days.
-      </p>
-
-      <a routerLink="/maintenance" class="card-link">
-        View Maintenance
-      </a>
     </div>
 
-    <div class="info-card insurance-alert">
-      <div class="info-card-header">
-        <h4>📢 Insurance Expiry Alerts</h4>
-        <span class="badge badge-danger">{{ insuranceExpiryAlerts }}</span>
+    <div class="summary-card card-green">
+      <div class="card-icon">🛠️</div>
+      <div>
+        <h3>{{ upcomingServices }}</h3>
+        <p>Upcoming Services (30 days)</p>
       </div>
+    </div>
 
-      <p>
-        Insurance policies expiring within the next 30 days.
-      </p>
+    <div class="summary-card card-purple">
+      <div class="card-icon">👤</div>
+      <div>
+        <h3>{{ username }}</h3>
+        <p>Logged in as Mechanic</p>
+      </div>
+    </div>
 
-      <a routerLink="/insurance" class="card-link">
-        View Insurance
-      </a>
+    <div class="summary-card card-teal">
+      <div class="card-icon">🛡️</div>
+      <div>
+        <h3>Secured</h3>
+        <p>JWT Access</p>
+      </div>
     </div>
 
   </div>
 
-  <!-- Quick Navigation -->
-  <div class="quick-actions">
+  <!-- ============================================ -->
+  <!-- Alert Section — Role Based                   -->
+  <!-- ============================================ -->
+  <div class="alert-section" *ngIf="role === 'ADMIN' || role === 'MECHANIC'">
+
+    <div class="info-card maintenance-alert" *ngIf="role === 'ADMIN' || role === 'MECHANIC'">
+      <div class="info-card-header">
+        <h4>🛠️ Upcoming Services</h4>
+        <span class="badge badge-warning">{{ upcomingServices }}</span>
+      </div>
+      <p>Maintenance records with next service date within the next 30 days.</p>
+      <a routerLink="/maintenance" class="card-link">View Maintenance</a>
+    </div>
+
+    <div class="info-card insurance-alert" *ngIf="role === 'ADMIN'">
+      <div class="info-card-header">
+        <h4>📢 Insurance Expiry Alerts</h4>
+        <span class="badge badge-danger">{{ insuranceExpiryAlerts }}</span>
+      </div>
+      <p>Insurance policies expiring within the next 30 days.</p>
+      <a routerLink="/insurance" class="card-link">View Insurance</a>
+    </div>
+
+  </div>
+
+  <!-- ============================================ -->
+  <!-- Quick Actions — Role Based                   -->
+  <!-- ============================================ -->
+  <div class="quick-actions" *ngIf="role !== 'DRIVER'">
 
     <h3>Quick Actions</h3>
 
     <div class="action-buttons">
-      <a routerLink="/vehicles" class="action-btn vehicle-btn">
+
+      <a routerLink="/vehicles" class="action-btn vehicle-btn" *ngIf="role === 'ADMIN' || role === 'FLEET_MANAGER'">
         🚚 Manage Vehicles
       </a>
 
-      <a routerLink="/drivers" class="action-btn driver-btn">
+      <a routerLink="/drivers" class="action-btn driver-btn" *ngIf="role === 'ADMIN' || role === 'FLEET_MANAGER'">
         👨‍✈️ Manage Drivers
       </a>
 
-      <a routerLink="/maintenance" class="action-btn maintenance-btn">
+      <a routerLink="/maintenance" class="action-btn maintenance-btn" *ngIf="role === 'ADMIN' || role === 'MECHANIC'">
         🛠️ Manage Maintenance
       </a>
 
-      <a routerLink="/insurance" class="action-btn insurance-btn">
+      <a routerLink="/insurance" class="action-btn insurance-btn" *ngIf="role === 'ADMIN'">
         📄 Manage Insurance
       </a>
+
     </div>
 
   </div>

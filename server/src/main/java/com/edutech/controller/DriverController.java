@@ -73,4 +73,13 @@ public class DriverController {
      public ResponseEntity<List<DriverDTO>> sortByExperience(@RequestParam String order) {
           return ResponseEntity.ok(driverService.sortByExperience(order));
      }
+
+     // ✅ NEW — Driver can update own availability status
+     @PutMapping("/my-status")
+     public ResponseEntity<DriverDTO> updateMyStatus(
+               @RequestParam String driverName,
+               @RequestParam String status) {
+
+          return ResponseEntity.ok(driverService.updateStatusByName(driverName, status));
+     }
 }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
-
-
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,8 +8,8 @@ import { HttpService } from '../../../services/http.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  
-totalVehicles: number = 0;
+
+  totalVehicles: number = 0;
   activeVehicles: number = 0;
   inactiveVehicles: number = 0;
   underServiceVehicles: number = 0;
@@ -27,17 +26,66 @@ totalVehicles: number = 0;
 
   errorMessage: string = '';
 
-  constructor(private httpService: HttpService) {}
+  role: string | null = '';
+  username: string | null = '';
+
+  // ✅ NEW — Driver status toggle
+  driverStatus: string = 'Available';
+  driverStatusMessage: string = '';
+  driverStatusError: string = '';
+  currentDate: string = '';
+  currentTime: string = '';
+
+  constructor(
+    private httpService: HttpService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
+    this.role = this.authService.getRole();
+    this.username = this.authService.getUsername();
+    this.updateClock();
     this.loadDashboardData();
+
+    // Update clock every second
+    setInterval(() => {
+      this.updateClock();
+    }, 1000);
+  }
+
+  updateClock(): void {
+    const now = new Date();
+    this.currentDate = now.toLocaleDateString('en-IN', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    this.currentTime = now.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
   }
 
   loadDashboardData(): void {
-    this.loadVehicleSummary();
-    this.loadDriverSummary();
-    this.loadMaintenanceSummary();
-    this.loadInsuranceSummary();
+    if (this.role === 'ADMIN') {
+      this.loadVehicleSummary();
+      this.loadDriverSummary();
+      this.loadMaintenanceSummary();
+      this.loadInsuranceSummary();
+    }
+
+    if (this.role === 'FLEET_MANAGER') {
+      this.loadVehicleSummary();
+      this.loadDriverSummary();
+    }
+
+    if (this.role === 'MECHANIC') {
+      this.loadMaintenanceSummary();
+    }
+
+    // DRIVER → no API calls needed for summary
   }
 
   loadVehicleSummary(): void {
@@ -112,6 +160,39 @@ totalVehicles: number = 0;
     });
   }
 
+  // ✅ NEW — Driver toggles own status
+  toggleDriverStatus(): void {
+    this.driverStatusMessage = '';
+    this.driverStatusError = '';
+
+    if (!this.username) {
+      this.driverStatusError = 'Username not found. Please re-login.';
+      return;
+    }
+
+    // ✅ FIX — Send the SELECTED status directly, don't flip it
+    this.httpService.updateDriverStatus(this.username, this.driverStatus).subscribe({
+      next: (response: any) => {
+        this.driverStatusMessage = 'Status updated to ' + this.driverStatus + '!';
+
+        setTimeout(() => {
+          this.driverStatusMessage = '';
+        }, 3000);
+      },
+      error: (error: any) => {
+        if (error?.error?.message) {
+          this.driverStatusError = error.error.message;
+        } else {
+          this.driverStatusError = 'Failed to update status. Make sure your username matches your driver name.';
+        }
+
+        setTimeout(() => {
+          this.driverStatusError = '';
+        }, 5000);
+      }
+    });
+  }
+  
   isWithinNext30Days(dateValue: string | undefined | null): boolean {
     if (!dateValue) {
       return false;
@@ -128,5 +209,4 @@ totalVehicles: number = 0;
 
     return differenceInDays >= 0 && differenceInDays <= 30;
   }
-
 }

@@ -1,4 +1,3 @@
-
 <div class="register-command-page">
 
   <!-- Top Live Stats Strip -->
@@ -15,14 +14,14 @@
   <div class="noise-layer"></div>
   <div class="hex-grid"></div>
 
-  <!-- Floating Vehicles in Page Background -->
+  <!-- Floating Vehicles -->
   <div class="vehicle-bg vehicle-bg-1">🚚</div>
   <div class="vehicle-bg vehicle-bg-2">🚛</div>
   <div class="vehicle-bg vehicle-bg-3">🚐</div>
   <div class="vehicle-bg vehicle-bg-4">🚗</div>
   <div class="vehicle-bg vehicle-bg-5">🚚</div>
 
-  <!-- Floating Data Streams -->
+  <!-- Data Streams -->
   <div class="data-streams">
     <span>GPS 28.6139°N 77.2090°E</span>
     <span>ROUTE SYNC 04A</span>
@@ -32,11 +31,10 @@
     <span>VEHICLE TELEMETRY ONLINE</span>
   </div>
 
-  <!-- Animated Route Lines -->
+  <!-- Route Lines -->
   <svg class="world-routes" viewBox="0 0 1200 600" preserveAspectRatio="none">
     <path d="M80 420 C250 280 390 360 520 250 C700 100 850 220 1080 130"></path>
     <path d="M120 180 C310 260 420 170 620 310 C780 430 940 320 1120 450"></path>
-
     <circle cx="520" cy="250" r="8"></circle>
     <circle cx="850" cy="220" r="8"></circle>
     <circle cx="1080" cy="130" r="8"></circle>
@@ -47,7 +45,6 @@
 
     <div class="card-glow"></div>
 
-    <!-- Vehicles inside Card Background -->
     <div class="card-vehicle card-vehicle-1">🚚</div>
     <div class="card-vehicle card-vehicle-2">🚛</div>
     <div class="card-vehicle card-vehicle-3">🚐</div>
@@ -57,42 +54,36 @@
 
     <!-- Brand Header -->
     <div class="brand-header">
-      <div class="logo-orb">
-        🚚
-      </div>
-
+      <div class="logo-orb">🚚</div>
       <div>
         <h1>SmartFleet Pro</h1>
         <p>Your Fleet. Fully Commanded.</p>
       </div>
     </div>
 
-    <!-- Single Access Status -->
+    <!-- Access Status -->
     <div class="access-status">
       <div class="access-node active">
         <span>1</span>
       </div>
-
       <div class="access-line"></div>
-
       <div class="access-text">
         <strong>Admin Access Registration</strong>
-        <small>Identity verification · Secure command profile · Fleet dashboard access</small>
+        <small>Identity verification · Email OTP · Secure command profile</small>
       </div>
     </div>
 
     <!-- Title -->
     <div class="form-title">
       <h2>Create Command Access</h2>
-      <p>Register as SmartFleet Pro Admin and initialize your fleet control profile.</p>
+      <p>Register as SmartFleet Pro user and initialize your fleet control profile.</p>
     </div>
 
-    <!-- Success Message -->
+    <!-- Messages -->
     <div class="alert alert-success" *ngIf="successMessage">
       ✅ {{ successMessage }}
     </div>
 
-    <!-- Error Message -->
     <div class="alert alert-danger" *ngIf="errorMessage">
       ⚠️ {{ errorMessage }}
     </div>
@@ -109,97 +100,180 @@
           <div class="input-shell">
             <span class="input-icon">👤</span>
 
-            <input
-              type="text"
-              placeholder="Enter admin username"
-              formControlName="username"
-              [class.is-invalid]="isInvalid('username')"
-              [class.is-valid]="registerForm.get('username')?.valid && registerForm.get('username')?.touched"
-            />
+            <input type="text" placeholder="Enter username" formControlName="username" (blur)="checkUsername()"
+              [class.is-invalid]="isInvalid('username') || usernameExists" [class.is-valid]="usernameVerified" />
 
-            <span
-              class="valid-check"
-              *ngIf="registerForm.get('username')?.valid && registerForm.get('username')?.touched">
-              ✓
-            </span>
+            <span class="input-status" *ngIf="usernameChecking">⏳</span>
+            <span class="valid-check" *ngIf="usernameVerified">✓</span>
+            <span class="invalid-check" *ngIf="usernameExists">✗</span>
           </div>
 
-          <small
-            class="error"
-            *ngIf="isInvalid('username') && registerForm.get('username')?.hasError('required')">
+          <small class="error" *ngIf="isInvalid('username') && registerForm.get('username')?.hasError('required')">
             Username is required.
+          </small>
+
+          <small class="error" *ngIf="usernameExists">
+            Username is already taken.
+          </small>
+
+          <small class="success-text" *ngIf="usernameVerified">
+            ✓ Username is available!
           </small>
         </div>
 
-        <!-- Email -->
+        <!-- Email + OTP -->
         <div class="form-group field-delay-2">
           <label>Email Address</label>
 
           <div class="input-shell">
             <span class="input-icon">✉</span>
 
-            <input
-              type="email"
-              placeholder="name@company.com"
-              formControlName="email"
-              [class.is-invalid]="isInvalid('email')"
-              [class.is-valid]="registerForm.get('email')?.valid && registerForm.get('email')?.touched"
-            />
+            <input type="email" placeholder="name@company.com" formControlName="email" (blur)="checkEmail()"
+              [class.is-invalid]="isInvalid('email') || emailExists" [class.is-valid]="otpVerified"
+              [readonly]="otpVerified" />
 
-            <span
-              class="valid-check"
-              *ngIf="registerForm.get('email')?.valid && registerForm.get('email')?.touched">
-              ✓
-            </span>
+            <span class="input-status" *ngIf="emailChecking">⏳</span>
+            <span class="valid-check" *ngIf="otpVerified">✓</span>
+            <span class="invalid-check" *ngIf="emailExists">✗</span>
           </div>
 
-          <small
-            class="error"
-            *ngIf="isInvalid('email') && registerForm.get('email')?.hasError('required')">
+          <small class="error" *ngIf="isInvalid('email') && registerForm.get('email')?.hasError('required')">
             Email is required.
           </small>
 
-          <small
-            class="error"
-            *ngIf="isInvalid('email') && registerForm.get('email')?.hasError('email')">
+          <small class="error" *ngIf="isInvalid('email') && registerForm.get('email')?.hasError('email')">
             Enter a valid email address.
           </small>
+
+          <small class="error" *ngIf="emailExists">
+            Email is already registered.
+          </small>
+
+          <small class="success-text" *ngIf="otpVerified">
+            ✓ Email verified successfully!
+          </small>
+
+          <!-- OTP Section -->
+          <div class="otp-section" *ngIf="emailAvailable && !otpVerified">
+
+            <button type="button" class="otp-send-btn" (click)="sendOtp()"
+              [disabled]="otpSending || (otpSent && otpTimer > 0)" *ngIf="!otpSent || otpTimer === 0">
+              {{ otpSending ? '⏳ Sending...' : '📧 Send OTP' }}
+            </button>
+
+            <small class="otp-sent-text" *ngIf="otpSentMessage && !otpVerified">
+              ✅ {{ otpSentMessage }}
+            </small>
+
+            <div class="otp-input-row" *ngIf="otpSent">
+
+              <input type="text" class="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" [(ngModel)]="otpCode"
+                [ngModelOptions]="{standalone: true}" [class.otp-verified]="otpVerified" />
+
+              <button type="button" class="otp-verify-btn" (click)="verifyOtp()"
+                [disabled]="otpVerifying || otpCode.length !== 6">
+                {{ otpVerifying ? '⏳' : '✓ Verify' }}
+              </button>
+
+            </div>
+
+            <div class="otp-actions" *ngIf="otpSent && !otpVerified">
+
+              <small class="otp-timer" *ngIf="otpTimer > 0">
+                Resend in {{ otpTimer }}s
+              </small>
+
+              <button type="button" class="otp-resend-btn" (click)="resendOtp()" *ngIf="otpTimer === 0">
+                🔄 Resend OTP
+              </button>
+
+            </div>
+
+            <small class="error" *ngIf="otpError">
+              {{ otpError }}
+            </small>
+
+          </div>
+
         </div>
 
-        <!-- Password -->
+        <!-- Password — with real-time validation -->
         <div class="form-group field-delay-3">
           <label>Password</label>
 
           <div class="input-shell">
             <span class="input-icon">🔒</span>
 
-            <input
-              type="password"
-              placeholder="Create secure password"
-              formControlName="password"
-              [class.is-invalid]="isInvalid('password')"
-              [class.is-valid]="registerForm.get('password')?.valid && registerForm.get('password')?.touched"
-            />
+            <input type="password" placeholder="Create secure password" formControlName="password"
+              (input)="checkPasswordRules()" [class.is-invalid]="isInvalid('password')"
+              [class.is-valid]="registerForm.get('password')?.valid && registerForm.get('password')?.touched" />
 
-            <span
-              class="valid-check"
+            <span class="valid-check"
               *ngIf="registerForm.get('password')?.valid && registerForm.get('password')?.touched">
               ✓
             </span>
           </div>
 
-          <div class="static-strength">
-            <span></span>
-            <span></span>
-            <span></span>
-            <small>Secure access credential</small>
+          <!-- Strength Bar -->
+          <div class="strength-bar" *ngIf="passwordTouched">
+            <div class="strength-segment" [class.seg-red]="passedRules >= 1" [class.seg-orange]="passedRules >= 2"
+              [class.seg-yellow]="passedRules >= 3" [class.seg-green]="passedRules >= 4"
+              [class.seg-strong]="passedRules >= 5">
+            </div>
+            <div class="strength-segment" [class.seg-orange]="passedRules >= 2" [class.seg-yellow]="passedRules >= 3"
+              [class.seg-green]="passedRules >= 4" [class.seg-strong]="passedRules >= 5">
+            </div>
+            <div class="strength-segment" [class.seg-yellow]="passedRules >= 3" [class.seg-green]="passedRules >= 4"
+              [class.seg-strong]="passedRules >= 5">
+            </div>
+            <div class="strength-segment" [class.seg-green]="passedRules >= 4" [class.seg-strong]="passedRules >= 5">
+            </div>
+            <div class="strength-segment" [class.seg-strong]="passedRules === 5">
+            </div>
+
+            <small class="strength-label">
+              <span *ngIf="passedRules <= 1">Weak</span>
+              <span *ngIf="passedRules === 2">Fair</span>
+              <span *ngIf="passedRules === 3">Good</span>
+              <span *ngIf="passedRules === 4">Strong</span>
+              <span *ngIf="passedRules === 5">Excellent ✓</span>
+            </small>
           </div>
 
-          <small
-            class="error"
-            *ngIf="isInvalid('password') && registerForm.get('password')?.hasError('required')">
+          <!-- Real-time rule checklist -->
+          <div class="password-rules" *ngIf="passwordTouched">
+
+            <div class="rule-item" [class.rule-pass]="passwordRules.minLength">
+              <span class="rule-icon">{{ passwordRules.minLength ? '✅' : '❌' }}</span>
+              Minimum 8 characters
+            </div>
+
+            <div class="rule-item" [class.rule-pass]="passwordRules.uppercase">
+              <span class="rule-icon">{{ passwordRules.uppercase ? '✅' : '❌' }}</span>
+              At least 1 uppercase letter (A-Z)
+            </div>
+
+            <div class="rule-item" [class.rule-pass]="passwordRules.lowercase">
+              <span class="rule-icon">{{ passwordRules.lowercase ? '✅' : '❌' }}</span>
+              At least 1 lowercase letter (a-z)
+            </div>
+
+            <div class="rule-item" [class.rule-pass]="passwordRules.number">
+              <span class="rule-icon">{{ passwordRules.number ? '✅' : '❌' }}</span>
+              At least 1 number (0-9)
+            </div>
+
+            <div class="rule-item" [class.rule-pass]="passwordRules.special">
+              <span class="rule-icon">{{ passwordRules.special ? '✅' : '❌' }}</span>
+              At least 1 special character (!@#$%^&*)
+            </div>
+
+          </div>
+
+          <small class="error" *ngIf="isInvalid('password') && registerForm.get('password')?.hasError('required')">
             Password is required.
           </small>
+
         </div>
 
         <!-- Contact Number -->
@@ -209,26 +283,26 @@
           <div class="input-shell">
             <span class="input-icon">📱</span>
 
-            <input
-              type="text"
-              maxlength="10"
-              placeholder="10 digit contact number"
-              formControlName="contactNumber"
-              [class.is-invalid]="isInvalid('contactNumber')"
-              [class.is-valid]="registerForm.get('contactNumber')?.valid && registerForm.get('contactNumber')?.touched"
-            />
+            <input type="text" maxlength="10" placeholder="10 digit contact number" formControlName="contactNumber"
+              (blur)="checkPhone()" [class.is-invalid]="isInvalid('contactNumber') || phoneExists"
+              [class.is-valid]="phoneVerified" />
 
-            <span
-              class="valid-check"
-              *ngIf="registerForm.get('contactNumber')?.valid && registerForm.get('contactNumber')?.touched">
-              ✓
-            </span>
+            <span class="input-status" *ngIf="phoneChecking">⏳</span>
+            <span class="valid-check" *ngIf="phoneVerified">✓</span>
+            <span class="invalid-check" *ngIf="phoneExists">✗</span>
           </div>
 
-          <small
-            class="error"
+          <small class="error"
             *ngIf="isInvalid('contactNumber') && registerForm.get('contactNumber')?.hasError('pattern')">
             Contact number must be exactly 10 digits.
+          </small>
+
+          <small class="error" *ngIf="phoneExists">
+            Contact number is already registered.
+          </small>
+
+          <small class="success-text" *ngIf="phoneVerified">
+            ✓ Contact number is available!
           </small>
         </div>
 
@@ -239,31 +313,28 @@
           <div class="input-shell">
             <span class="input-icon">🛡️</span>
 
-            <select
-              formControlName="role"
-              [class.is-invalid]="isInvalid('role')"
+            <select formControlName="role" [class.is-invalid]="isInvalid('role')"
               [class.is-valid]="registerForm.get('role')?.valid && registerForm.get('role')?.touched">
               <option value="">Select role</option>
               <option value="ADMIN">ADMIN</option>
+              <option value="FLEET_MANAGER">FLEET MANAGER</option>
+              <option value="DRIVER">DRIVER</option>
+              <option value="MECHANIC">MECHANIC</option>
             </select>
 
-            <span
-              class="valid-check"
-              *ngIf="registerForm.get('role')?.valid && registerForm.get('role')?.touched">
+            <span class="valid-check" *ngIf="registerForm.get('role')?.valid && registerForm.get('role')?.touched">
               ✓
             </span>
           </div>
 
-          <small
-            class="error"
-            *ngIf="isInvalid('role') && registerForm.get('role')?.hasError('required')">
+          <small class="error" *ngIf="isInvalid('role') && registerForm.get('role')?.hasError('required')">
             Role is required.
           </small>
         </div>
 
       </div>
 
-      <!-- Insight Callout -->
+      <!-- Insight -->
       <div class="insight-callout">
         <div class="insight-icon">📡</div>
         <div>
@@ -273,7 +344,7 @@
       </div>
 
       <!-- Submit -->
-      <button type="submit" class="btn-launch">
+      <button type="submit" class="btn-launch" [class.btn-disabled]="!otpVerified">
         Launch My Fleet Dashboard
         <span>→</span>
       </button>
@@ -289,26 +360,20 @@
   </div>
 
 </div>
+
 <!-- Launch Car Animation Overlay -->
 <div class="launch-overlay" *ngIf="launching">
-
   <div class="launch-grid"></div>
-
   <div class="launch-message">
     <div class="launch-badge">ACCESS GRANTED</div>
     <h2>Initializing Command Center</h2>
     <p>Redirecting to login gateway...</p>
   </div>
-
   <div class="road">
     <div class="road-line"></div>
     <div class="speed-line speed-line-1"></div>
     <div class="speed-line speed-line-2"></div>
     <div class="speed-line speed-line-3"></div>
-
-    <div class="launch-car">
-      🚗
-    </div>
+    <div class="launch-car">🚗</div>
   </div>
-
 </div>

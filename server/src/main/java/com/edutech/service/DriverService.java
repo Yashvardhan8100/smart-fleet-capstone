@@ -127,4 +127,19 @@ public class DriverService {
                     .map(this::mapToDTO)
                     .collect(Collectors.toList());
      }
+
+     // ✅ NEW — Update driver status by name (for DRIVER role)
+     public DriverDTO updateStatusByName(String driverName, String status) {
+
+          List<Driver> drivers = driverRepository.findByNameIgnoreCase(driverName);
+
+          if (drivers.isEmpty()) {
+               throw new ResourceNotFoundException("Driver not found");
+          }
+
+          Driver driver = drivers.get(0);
+          driver.setAvailabilityStatus(status);
+
+          return mapToDTO(driverRepository.save(driver));
+     }
 }

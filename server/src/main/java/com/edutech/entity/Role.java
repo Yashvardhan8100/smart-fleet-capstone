@@ -1,5 +1,8 @@
 package com.edutech.entity;
 
 public enum Role {
-    ADMIN;
+    ADMIN,
+    FLEET_MANAGER,
+    DRIVER,
+    MECHANIC;
 }

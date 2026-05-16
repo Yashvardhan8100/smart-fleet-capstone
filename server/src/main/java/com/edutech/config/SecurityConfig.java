@@ -27,64 +27,73 @@ import com.edutech.util.JwtRequestFilter;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserService userService;
+        @Autowired
+        private UserService userService;
 
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
+        @Autowired
+        private JwtRequestFilter jwtRequestFilter;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+        @Autowired
+        private PasswordEncoder passwordEncoder;
 
-  
-@Override
-protected void configure(
-        AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(
-        username -> {
-            User user = userService.findByUsername(username);
-            
-if (user == null) {
-    throw new org.springframework.security.core.userdetails.UsernameNotFoundException(
-        "User not found: " + username
-    );
-}
+        @Override
+        protected void configure(
+                        AuthenticationManagerBuilder auth) throws Exception {
+                auth.userDetailsService(
+                                username -> {
+                                        User user = userService.findByUsername(username);
 
-return new org.springframework.security.core.userdetails.User(
-    user.getUsername(),
-    user.getPassword(),
-    Collections.singletonList(
-        new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
-    )
-);
+                                        if (user == null) {
+                                                throw new org.springframework.security.core.userdetails.UsernameNotFoundException(
+                                                                "User not found: " + username);
+                                        }
 
-        })
-        .passwordEncoder(passwordEncoder);
-}
+                                        return new org.springframework.security.core.userdetails.User(
+                                                        user.getUsername(),
+                                                        user.getPassword(),
+                                                        Collections.singletonList(
+                                                                        new SimpleGrantedAuthority("ROLE_"
+                                                                                        + user.getRole().name())));
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-            .authorizeRequests()
-            .antMatchers("/api/auth/register", "/api/auth/login").permitAll()
-            .antMatchers("/api/vehicles/**").hasRole("ADMIN")
-            .antMatchers("/api/drivers/**").hasRole("ADMIN")
-            .antMatchers("/api/maintenance/**").hasRole("ADMIN")
-            .antMatchers("/api/insurance/**").hasRole("ADMIN")
-            //  .antMatchers("/api/vehicles/**").permitAll()
-            // .antMatchers("/api/insurance/**").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                                })
+                                .passwordEncoder(passwordEncoder);
+        }
 
-        http.addFilterBefore(jwtRequestFilter,
-            UsernamePasswordAuthenticationFilter.class);
-    }
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+                http.csrf().disable()
+                                .authorizeRequests()
+                                .antMatchers(
+                                                "/api/auth/register",
+                                                "/api/auth/login",
+                                                "/api/auth/check-username",
+                                                "/api/auth/check-email",
+                                                "/api/auth/check-phone",
+                                                "/api/auth/send-otp",
+                                                "/api/auth/verify-otp",
+                                                "/api/auth/forgot-password/**")
+                                .permitAll()
 
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+                                // ✅ NEW — DRIVER can update own status
+                                .antMatchers("/api/drivers/my-status").hasAnyRole("ADMIN", "FLEET_MANAGER", "DRIVER")
+
+                                .antMatchers("/api/insurance/**").hasRole("ADMIN")
+                                .antMatchers("/api/vehicles/**").hasAnyRole("ADMIN", "FLEET_MANAGER")
+                                .antMatchers("/api/drivers/**").hasAnyRole("ADMIN", "FLEET_MANAGER")
+                                .antMatchers("/api/maintenance/**").hasAnyRole("ADMIN", "MECHANIC")
+
+                                .anyRequest().authenticated()
+                                .and()
+                                .sessionManagement()
+                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+                http.addFilterBefore(jwtRequestFilter,
+                                UsernamePasswordAuthenticationFilter.class);
+        }
+
+        @Override
+        @Bean
+        public AuthenticationManager authenticationManagerBean() throws Exception {
+                return super.authenticationManagerBean();
+        }
 }

@@ -16,13 +16,15 @@ export class AppComponent {
     private router: Router
   ) { }
 
+  get role(): string | null {
+    return this.authService.getRole();
+  }
+
   logout(): void {
     const confirmLogout = confirm('Are you sure you want to logout?');
     if (confirmLogout) {
       this.authService.logout();
       this.router.navigate(['/login']);
     }
-
   }
-
 }

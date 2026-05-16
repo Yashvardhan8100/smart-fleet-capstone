@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap');
 
 :host {
@@ -101,7 +100,7 @@
   animation: pulseGrid 4s ease-in-out infinite;
 }
 
-/* Floating vehicles in full page background */
+/* Floating vehicles */
 .vehicle-bg {
   position: absolute;
   z-index: 3;
@@ -256,7 +255,7 @@
   animation: orbit 7s linear infinite;
 }
 
-/* Vehicles inside card background */
+/* Vehicles inside card */
 .card-vehicle {
   position: absolute;
   z-index: 0;
@@ -308,7 +307,7 @@
   transform: rotate(9deg);
 }
 
-/* Keep actual content above decorative card layer */
+/* Keep content above decorative layer */
 .brand-header,
 .access-status,
 .form-title,
@@ -372,12 +371,7 @@ form,
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 170, 255, 0.12),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(0, 170, 255, 0.12), transparent);
   transform: translateX(-100%);
   animation: scanAccess 4s linear infinite;
 }
@@ -546,6 +540,7 @@ form,
 .input-shell input.is-valid,
 .input-shell select.is-valid {
   border-color: rgba(34, 197, 94, 0.75);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.10);
 }
 
 .input-shell input.is-invalid,
@@ -570,28 +565,6 @@ form,
   color: #fbbf24;
   font-size: 12.5px;
   font-weight: 800;
-}
-
-/* Password decorative strength */
-.static-strength {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 9px;
-}
-
-.static-strength span {
-  width: 34px;
-  height: 5px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--blue), var(--green));
-  box-shadow: 0 0 12px rgba(0, 170, 255, 0.32);
-}
-
-.static-strength small {
-  color: var(--muted);
-  font-size: 11px;
-  margin-left: 5px;
 }
 
 /* Insight */
@@ -740,7 +713,9 @@ form,
 }
 
 @keyframes pulseGrid {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.12;
   }
 
@@ -770,13 +745,16 @@ form,
     stroke-dashoffset: 1000;
   }
 
-  55%, 100% {
+  55%,
+  100% {
     stroke-dashoffset: 0;
   }
 }
 
 @keyframes pulseDot {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -850,7 +828,9 @@ form,
 }
 
 @keyframes shake {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateX(0);
   }
 
@@ -934,6 +914,7 @@ form,
     font-size: 86px;
   }
 }
+
 /* Launch Car Animation Overlay */
 .launch-overlay {
   position: fixed;
@@ -1014,14 +995,7 @@ form,
   top: 72px;
   height: 4px;
   background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(0, 170, 255, 0.15),
-      var(--blue),
-      rgba(255, 170, 0, 0.8),
-      transparent
-    );
+    linear-gradient(90deg, transparent, rgba(0, 170, 255, 0.15), var(--blue), rgba(255, 170, 0, 0.8), transparent);
   box-shadow:
     0 0 22px rgba(0, 170, 255, 0.6),
     0 0 34px rgba(255, 170, 0, 0.35);
@@ -1033,8 +1007,7 @@ form,
   top: 12px;
   font-size: 72px;
   filter:
-    drop-shadow(0 0 20px rgba(0, 170, 255, 0.75))
-    drop-shadow(0 0 36px rgba(255, 170, 0, 0.45));
+    drop-shadow(0 0 20px rgba(0, 170, 255, 0.75)) drop-shadow(0 0 36px rgba(255, 170, 0, 0.45));
   animation: carDrive 1.85s cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
 }
 
@@ -1075,7 +1048,6 @@ form,
   animation-delay: 0.45s;
 }
 
-/* Launch Animations */
 @keyframes launchFadeIn {
   from {
     opacity: 0;
@@ -1141,5 +1113,297 @@ form,
   to {
     left: 110%;
     opacity: 0;
+  }
+}
+
+/* ============================================ */
+/* OTP Verification Styles                      */
+/* ============================================ */
+
+.otp-section {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.otp-send-btn {
+  height: 38px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--blue), #2563eb);
+  color: #001018;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 8px 16px rgba(0, 170, 255, 0.22);
+  align-self: flex-start;
+}
+
+.otp-send-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px rgba(0, 170, 255, 0.32);
+}
+
+.otp-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.otp-sent-text {
+  color: #22c55e;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+.otp-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.otp-input {
+  width: 180px;
+  height: 44px;
+  border-radius: 12px;
+  border: 2px solid rgba(0, 170, 255, 0.45);
+  background: rgba(2, 6, 23, 0.58);
+  color: #ffffff;
+  padding: 0 14px;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  text-align: center;
+  outline: none;
+  transition: all 0.22s ease;
+}
+
+.otp-input::placeholder {
+  font-size: 13px;
+  letter-spacing: 0;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.otp-input:focus {
+  border-color: rgba(0, 170, 255, 0.85);
+  box-shadow:
+    0 0 0 4px rgba(0, 170, 255, 0.14),
+    0 0 28px rgba(0, 170, 255, 0.18);
+}
+
+.otp-input.otp-verified {
+  border-color: rgba(34, 197, 94, 0.75);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.otp-verify-btn {
+  height: 44px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 8px 16px rgba(34, 197, 94, 0.22);
+}
+
+.otp-verify-btn:hover {
+  transform: translateY(-2px);
+}
+
+.otp-verify-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.otp-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.otp-timer {
+  color: var(--amber);
+  font-size: 12.5px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.otp-resend-btn {
+  border: none;
+  background: transparent;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.otp-resend-btn:hover {
+  color: #ffffff;
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-disabled:hover {
+  transform: none;
+  box-shadow:
+    0 20px 42px rgba(0, 170, 255, 0.15),
+    0 0 35px rgba(255, 170, 0, 0.10);
+}
+
+.input-status {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  animation: spinStatus 1s linear infinite;
+}
+
+@keyframes spinStatus {
+  from {
+    transform: translateY(-50%) rotate(0deg);
+  }
+
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+.invalid-check {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ef4444;
+  font-weight: 900;
+  font-size: 18px;
+  animation: checkPop 0.3s ease;
+}
+
+.success-text {
+  display: block;
+  margin-top: 7px;
+  color: #22c55e;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+/* ============================================ */
+/* Password Validation Styles                   */
+/* ============================================ */
+
+/* Strength Bar */
+.strength-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.strength-segment {
+  flex: 1;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.25);
+  transition: all 0.3s ease;
+}
+
+.seg-red {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+.seg-orange {
+  background: #f97316;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.4);
+}
+
+.seg-yellow {
+  background: #eab308;
+  box-shadow: 0 0 8px rgba(234, 179, 8, 0.4);
+}
+
+.seg-green {
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+}
+
+.seg-strong {
+  background: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+
+.strength-label {
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.strength-label span {
+  color: var(--muted);
+}
+
+/* Rule Checklist */
+.password-rules {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(2, 6, 23, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.rule-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fca5a5;
+  transition: all 0.25s ease;
+}
+
+.rule-item.rule-pass {
+  color: #86efac;
+}
+
+.rule-icon {
+  font-size: 13px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Responsive OTP + Password */
+@media (max-width: 760px) {
+  .otp-input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .otp-input {
+    width: 100%;
+  }
+
+  .otp-verify-btn {
+    width: 100%;
   }
 }

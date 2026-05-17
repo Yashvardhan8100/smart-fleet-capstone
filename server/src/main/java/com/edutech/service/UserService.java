@@ -68,11 +68,22 @@ public class UserService implements UserDetailsService {
 
     // Register new user with encoded password
     public User registerUser(User user) {
+
+        // ✅ Username check
         if (existsByUsername(user.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
-        user.setPassword(
-                passwordEncoder.encode(user.getPassword()));
+
+        // ✅ RESTRICT MULTIPLE ADMIN
+        if ("ADMIN".equalsIgnoreCase(user.getRole().toString())
+                && userRepository.existsByRole("ADMIN")) {
+
+            throw new RuntimeException("Only one admin is allowed.");
+        }
+
+        // ✅ Password encoding
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         return userRepository.save(user);
     }
 

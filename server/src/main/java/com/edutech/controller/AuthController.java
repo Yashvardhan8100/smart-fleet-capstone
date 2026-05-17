@@ -38,15 +38,21 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // POST /api/auth/register
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody User user) {
         try {
             User registered = userService.registerUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(registered);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    Map.of(
+                            "message", "User registered successfully",
+                            "data", registered));
+
+        } catch (RuntimeException e) {
+
+            // ✅ ✅ CLEAN VALIDATION RESPONSE
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("message", e.getMessage()));
         }
     }
 

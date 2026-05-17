@@ -54,9 +54,9 @@ public class InsuranceController {
 
      // ✅ DELETE /api/insurance/{id}
      @DeleteMapping("/{id}")
-     public ResponseEntity<String> deleteInsurance(@PathVariable Long id) {
+     public ResponseEntity<?> deleteInsurance(@PathVariable Long id) {
           service.deleteInsurance(id);
-          return ResponseEntity.ok("Insurance deleted successfully");
+          return ResponseEntity.ok(Map.of("message", "Insurance deleted successfully"));
      }
 
      // ✅ GET /api/insurance/search?providerName=
@@ -72,8 +72,8 @@ public class InsuranceController {
      }
 
      // ✅ GET /api/insurance/sort/premium?order=asc|desc
-    @GetMapping("/sort/premium")
-    public ResponseEntity<List<InsuranceDTO>> sortByPremium(@RequestParam String order) {
-        return ResponseEntity.ok(service.sortByPremiumAmount(order));
-    }
+     @GetMapping("/sort/premium")
+     public ResponseEntity<List<InsuranceDTO>> sortByPremium(@RequestParam String order) {
+          return ResponseEntity.ok(service.sortByPremiumAmount(order));
+     }
 }

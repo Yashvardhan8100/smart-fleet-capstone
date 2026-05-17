@@ -58,9 +58,9 @@ public class MaintenanceRecordController {
 
      // ✅ DELETE /api/maintenance/{id}
      @DeleteMapping("/{id}")
-     public ResponseEntity<String> deleteRecord(@PathVariable Long id) {
+     public ResponseEntity<?> deleteRecord(@PathVariable Long id) {
           service.deleteRecord(id);
-          return ResponseEntity.ok("Maintenance record deleted successfully");
+          return ResponseEntity.ok(Map.of("message", "Maintenance deleted successfully"));
      }
 
      // ✅ GET /api/maintenance/search?serviceType=

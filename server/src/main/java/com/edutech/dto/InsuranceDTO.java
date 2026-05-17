@@ -15,24 +15,13 @@ public class InsuranceDTO {
      private Long vehicleId;
      private String vehicleNumber;
 
+     // ✅ ADD THESE
+     private String brand;
+     private String model;
+
      public InsuranceDTO() {
      }
 
-     public InsuranceDTO(Long insuranceId, String providerName, String policyNumber,
-               LocalDate startDate, LocalDate endDate, double premiumAmount,
-               String coverageType, Long vehicleId, String vehicleNumber) {
-          this.insuranceId = insuranceId;
-          this.providerName = providerName;
-          this.policyNumber = policyNumber;
-          this.startDate = startDate;
-          this.endDate = endDate;
-          this.premiumAmount = premiumAmount;
-          this.coverageType = coverageType;
-          this.vehicleId = vehicleId;
-          this.vehicleNumber = vehicleNumber;
-     }
-
-     // Getters and setters
      public Long getInsuranceId() {
           return insuranceId;
      }
@@ -103,5 +92,22 @@ public class InsuranceDTO {
 
      public void setVehicleNumber(String n) {
           this.vehicleNumber = n;
+     }
+
+     // ✅ NEW
+     public String getBrand() {
+          return brand;
+     }
+
+     public void setBrand(String brand) {
+          this.brand = brand;
+     }
+
+     public String getModel() {
+          return model;
+     }
+
+     public void setModel(String model) {
+          this.model = model;
      }
 }

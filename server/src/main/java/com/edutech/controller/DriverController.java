@@ -10,6 +10,8 @@ import com.edutech.entity.Driver;
 import com.edutech.service.DriverService;
 
 import javax.validation.Valid;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,9 +53,13 @@ public class DriverController {
 
      // ✅ DELETE /api/drivers/{id} -> Delete driver
      @DeleteMapping("/{id}")
-     public ResponseEntity<String> deleteDriver(@PathVariable Long id) {
+     public ResponseEntity<?> deleteDriver(@PathVariable Long id) {
           driverService.deleteDriver(id);
-          return ResponseEntity.ok("Driver deleted successfully");
+
+          Map<String, String> response = new HashMap<>();
+          response.put("message", "Driver deleted successfully");
+
+          return ResponseEntity.ok(response);
      }
 
      // ✅ GET /api/drivers/search?name=

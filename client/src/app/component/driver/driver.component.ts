@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 
-
 @Component({
   selector: 'app-driver',
   templateUrl: './driver.component.html',
@@ -27,7 +26,7 @@ export class DriverComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private httpService: HttpService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.driverForm = this.fb.group({
@@ -42,13 +41,32 @@ export class DriverComponent implements OnInit {
     this.loadDrivers();
   }
 
+  /* ✅ NEW METHOD (MAIN FIX) */
+  private showMessage(message: string, type: 'success' | 'error') {
+    if (type === 'success') {
+      this.successMessage = message;
+      this.errorMessage = '';
+    } else {
+      this.errorMessage = message;
+      this.successMessage = '';
+    }
+
+    setTimeout(() => {
+      this.successMessage = '';
+      this.errorMessage = '';
+    }, 3000);
+  }
+
   loadDrivers(): void {
     this.httpService.getAllDrivers().subscribe({
       next: (data: any[]) => {
         this.drivers = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to load drivers.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to load drivers.'),
+          'error'
+        );
       }
     });
   }
@@ -72,30 +90,32 @@ export class DriverComponent implements OnInit {
       availabilityStatus: this.driverForm.value.availabilityStatus
     };
 
-    console.log('Driver payload:', driverPayload);
-
     if (this.editing && this.editingId !== null) {
       this.httpService.updateDriver(this.editingId, driverPayload).subscribe({
         next: () => {
-          this.successMessage = 'Driver updated successfully!';
+          this.showMessage('Driver updated successfully!', 'success');
           this.resetForm();
           this.loadDrivers();
         },
         error: (error: any) => {
-          console.error('Update driver error:', error);
-          this.errorMessage = this.extractErrorMessage(error, 'Failed to update driver.');
+          this.showMessage(
+            this.extractErrorMessage(error, 'Failed to update driver.'),
+            'error'
+          );
         }
       });
     } else {
       this.httpService.addDriver(driverPayload).subscribe({
         next: () => {
-          this.successMessage = 'Driver added successfully!';
+          this.showMessage('Driver added successfully!', 'success');
           this.resetForm();
           this.loadDrivers();
         },
         error: (error: any) => {
-          console.error('Add driver error:', error);
-          this.errorMessage = this.extractErrorMessage(error, 'Failed to add driver.');
+          this.showMessage(
+            this.extractErrorMessage(error, 'Failed to add driver.'),
+            'error'
+          );
         }
       });
     }
@@ -104,6 +124,7 @@ export class DriverComponent implements OnInit {
   editDriver(driver: any): void {
     this.editing = true;
     this.editingId = driver.driverId;
+
     this.successMessage = '';
     this.errorMessage = '';
 
@@ -120,26 +141,24 @@ export class DriverComponent implements OnInit {
   }
 
   deleteDriver(id: number): void {
-    if (!id) {
-      return;
-    }
+    if (!id) return;
 
     const confirmDelete = confirm('Are you sure you want to delete this driver?');
-
-    if (!confirmDelete) {
-      return;
-    }
+    if (!confirmDelete) return;
 
     this.successMessage = '';
     this.errorMessage = '';
 
     this.httpService.deleteDriver(id).subscribe({
       next: () => {
-        this.successMessage = 'Driver deleted successfully!';
+        this.showMessage('Driver deleted successfully!', 'success');
         this.loadDrivers();
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to delete driver.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to delete driver.'),
+          'error'
+        );
       }
     });
   }
@@ -159,7 +178,10 @@ export class DriverComponent implements OnInit {
       },
       error: (error: any) => {
         this.drivers = [];
-        this.errorMessage = this.extractErrorMessage(error, 'No drivers found.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'No drivers found.'),
+          'error'
+        );
       }
     });
   }
@@ -179,7 +201,10 @@ export class DriverComponent implements OnInit {
       },
       error: (error: any) => {
         this.drivers = [];
-        this.errorMessage = this.extractErrorMessage(error, 'No drivers found for selected availability.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'No drivers found for selected availability.'),
+          'error'
+        );
       }
     });
   }
@@ -193,7 +218,10 @@ export class DriverComponent implements OnInit {
         this.drivers = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to sort drivers.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to sort drivers.'),
+          'error'
+        );
       }
     });
   }
@@ -238,24 +266,10 @@ export class DriverComponent implements OnInit {
   }
 
   private extractErrorMessage(error: any, defaultMessage: string): string {
-    console.error('Backend error:', error);
-
-    if (error?.error?.message) {
-      return error.error.message;
-    }
-
-    if (error?.error?.error) {
-      return error.error.error;
-    }
-
-    if (typeof error?.error === 'string') {
-      return error.error;
-    }
-
-    if (error?.message) {
-      return error.message;
-    }
-
+    if (error?.error?.message) return error.error.message;
+    if (error?.error?.error) return error.error.error;
+    if (typeof error?.error === 'string') return error.error;
+    if (error?.message) return error.message;
     return defaultMessage;
   }
 }

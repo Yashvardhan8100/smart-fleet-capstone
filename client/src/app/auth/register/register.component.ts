@@ -42,7 +42,6 @@ export class RegisterComponent {
   phoneExists: boolean = false;
   phoneVerified: boolean = false;
 
-  // ✅ Password validation states
   passwordRules = {
     minLength: false,
     uppercase: false,
@@ -68,7 +67,6 @@ export class RegisterComponent {
     });
   }
 
-  // ✅ Check password rules in real-time
   checkPasswordRules(): void {
     this.passwordTouched = true;
     const password = this.registerForm.get('password')?.value || '';
@@ -82,23 +80,17 @@ export class RegisterComponent {
     };
   }
 
-  // ✅ Count passed rules (for strength bar)
   get passedRules(): number {
     const r = this.passwordRules;
-    return [r.minLength, r.uppercase, r.lowercase, r.number, r.special]
-      .filter(Boolean).length;
+    return [r.minLength, r.uppercase, r.lowercase, r.number, r.special].filter(Boolean).length;
   }
 
-  // Check username on blur
   checkUsername(): void {
     const username = this.registerForm.get('username')?.value?.trim();
-
     this.usernameVerified = false;
     this.usernameExists = false;
 
-    if (!username) {
-      return;
-    }
+    if (!username) return;
 
     this.usernameChecking = true;
 
@@ -114,7 +106,6 @@ export class RegisterComponent {
     });
   }
 
-  // Check email on blur
   checkEmail(): void {
     const email = this.registerForm.get('email')?.value?.trim();
 
@@ -127,9 +118,7 @@ export class RegisterComponent {
     this.otpSentMessage = '';
     this.stopOtpTimer();
 
-    if (!email || this.registerForm.get('email')?.invalid) {
-      return;
-    }
+    if (!email || this.registerForm.get('email')?.invalid) return;
 
     this.emailChecking = true;
 
@@ -145,20 +134,16 @@ export class RegisterComponent {
     });
   }
 
-  // Send OTP
   sendOtp(): void {
     const email = this.registerForm.get('email')?.value?.trim();
-
-    if (!email || this.emailExists) {
-      return;
-    }
+    if (!email || this.emailExists) return;
 
     this.otpSending = true;
     this.otpError = '';
     this.otpSentMessage = '';
 
     this.authService.sendOtp(email).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.otpSending = false;
         this.otpSent = true;
         this.otpSentMessage = 'OTP sent to ' + email;
@@ -166,17 +151,11 @@ export class RegisterComponent {
       },
       error: (error: any) => {
         this.otpSending = false;
-
-        if (error?.error?.message) {
-          this.otpError = error.error.message;
-        } else {
-          this.otpError = 'Failed to send OTP. Please try again.';
-        }
+        this.otpError = this.extractBackendMessage(error) || 'Failed to send OTP. Please try again.';
       }
     });
   }
 
-  // Verify OTP
   verifyOtp(): void {
     const email = this.registerForm.get('email')?.value?.trim();
 
@@ -208,7 +187,6 @@ export class RegisterComponent {
     });
   }
 
-  // Resend OTP
   resendOtp(): void {
     this.otpCode = '';
     this.otpVerified = false;
@@ -216,16 +194,11 @@ export class RegisterComponent {
     this.sendOtp();
   }
 
-  // Timer for resend cooldown
   startOtpTimer(): void {
     this.otpTimer = 60;
-
     this.otpTimerInterval = setInterval(() => {
       this.otpTimer--;
-
-      if (this.otpTimer <= 0) {
-        this.stopOtpTimer();
-      }
+      if (this.otpTimer <= 0) this.stopOtpTimer();
     }, 1000);
   }
 
@@ -234,20 +207,15 @@ export class RegisterComponent {
       clearInterval(this.otpTimerInterval);
       this.otpTimerInterval = null;
     }
-
     this.otpTimer = 0;
   }
 
-  // Check phone on blur
   checkPhone(): void {
     const phone = this.registerForm.get('contactNumber')?.value?.trim();
-
     this.phoneVerified = false;
     this.phoneExists = false;
 
-    if (!phone || this.registerForm.get('contactNumber')?.invalid) {
-      return;
-    }
+    if (!phone || this.registerForm.get('contactNumber')?.invalid) return;
 
     this.phoneChecking = true;
 
@@ -268,49 +236,32 @@ export class RegisterComponent {
     this.successMessage = '';
     this.errorMessage = '';
 
-    if (this.registerForm.invalid) {
-      return;
-    }
+    if (this.registerForm.invalid) return;
 
-    if (this.usernameExists) {
-      this.errorMessage = 'Username is already taken.';
-      return;
-    }
-
-    if (this.emailExists) {
-      this.errorMessage = 'Email is already registered.';
-      return;
-    }
-
-    if (!this.otpVerified) {
-      this.errorMessage = 'Please verify your email with OTP before registering.';
-      return;
-    }
-
-    if (this.phoneExists) {
-      this.errorMessage = 'Contact number is already registered.';
-      return;
-    }
+    if (this.usernameExists) return void (this.errorMessage = 'Username is already taken.');
+    if (this.emailExists) return void (this.errorMessage = 'Email is already registered.');
+    if (!this.otpVerified) return void (this.errorMessage = 'Please verify your email with OTP before registering.');
+    if (this.phoneExists) return void (this.errorMessage = 'Contact number is already registered.');
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
         this.successMessage = 'Access granted. Redirecting to login...';
         this.launching = true;
-
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2200);
+        setTimeout(() => this.router.navigate(['/login']), 2200);
       },
-      error: (error) => {
-        if (error.error && typeof error.error === 'string') {
-          this.errorMessage = error.error;
-        } else if (error.error?.message) {
-          this.errorMessage = error.error.message;
-        } else {
-          this.errorMessage = 'Registration failed. Please try again.';
-        }
+      error: (error: any) => {
+        // ✅ CLEAN VALIDATION MESSAGE FROM BACKEND
+        this.errorMessage = this.extractBackendMessage(error) || 'Registration failed. Please try again.';
       }
     });
+  }
+
+  private extractBackendMessage(error: any): string {
+    // backend returns {message:"..."} or plain string
+    if (error?.error?.message) return error.error.message;
+    if (typeof error?.error === 'string') return error.error;
+    if (error?.message) return error.message;
+    return '';
   }
 
   goToLogin(): void {
@@ -319,11 +270,6 @@ export class RegisterComponent {
 
   isInvalid(controlName: string): boolean {
     const control = this.registerForm.get(controlName);
-
-    return !!(
-      control &&
-      control.invalid &&
-      (control.dirty || control.touched || this.submitted)
-    );
+    return !!(control && control.invalid && (control.dirty || control.touched || this.submitted));
   }
 }

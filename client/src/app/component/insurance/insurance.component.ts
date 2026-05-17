@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 
-@Component
-({
+@Component({
   selector: 'app-insurance',
   templateUrl: './insurance.component.html',
   styleUrls: ['./insurance.component.scss']
@@ -28,7 +27,7 @@ export class InsuranceComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private httpService: HttpService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.insuranceForm = this.fb.group(
@@ -41,13 +40,27 @@ export class InsuranceComponent implements OnInit {
         premiumAmount: [0, [Validators.required, Validators.min(1)]],
         coverageType: ['Full', Validators.required]
       },
-      {
-        validators: this.endDateAfterStartDateValidator
-      }
+      { validators: this.endDateAfterStartDateValidator }
     );
 
     this.loadVehicles();
     this.loadInsuranceRecords();
+  }
+
+  /* ✅ Reusable message handler (auto-hide) */
+  private showMessage(message: string, type: 'success' | 'error') {
+    if (type === 'success') {
+      this.successMessage = message;
+      this.errorMessage = '';
+    } else {
+      this.errorMessage = message;
+      this.successMessage = '';
+    }
+
+    setTimeout(() => {
+      this.successMessage = '';
+      this.errorMessage = '';
+    }, 3000);
   }
 
   loadVehicles(): void {
@@ -56,7 +69,7 @@ export class InsuranceComponent implements OnInit {
         this.vehicles = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to load vehicles.');
+        this.showMessage(this.extractErrorMessage(error, 'Failed to load vehicles.'), 'error');
       }
     });
   }
@@ -67,15 +80,13 @@ export class InsuranceComponent implements OnInit {
         this.insuranceRecords = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to load insurance records.');
+        this.showMessage(this.extractErrorMessage(error, 'Failed to load insurance records.'), 'error');
       }
     });
   }
 
   saveInsurance(): void {
     this.submitted = true;
-    this.successMessage = '';
-    this.errorMessage = '';
 
     if (this.insuranceForm.invalid) {
       this.insuranceForm.markAllAsTouched();
@@ -94,25 +105,25 @@ export class InsuranceComponent implements OnInit {
     };
 
     if (this.editing && this.editingId !== null) {
-      this.httpService.updateInsurance(this.editingId, insurancePayload,vehicleId).subscribe({
+      this.httpService.updateInsurance(this.editingId, insurancePayload, vehicleId).subscribe({
         next: () => {
-          this.successMessage = 'Insurance record updated successfully!';
+          this.showMessage('Insurance record updated successfully!', 'success');
           this.resetForm();
           this.loadInsuranceRecords();
         },
         error: (error: any) => {
-          this.errorMessage = this.extractErrorMessage(error, 'Failed to update insurance record.');
+          this.showMessage(this.extractErrorMessage(error, 'Failed to update insurance record.'), 'error');
         }
       });
     } else {
-      this.httpService.addInsurance(insurancePayload,vehicleId).subscribe({
+      this.httpService.addInsurance(insurancePayload, vehicleId).subscribe({
         next: () => {
-          this.successMessage = 'Insurance record added successfully!';
+          this.showMessage('Insurance record added successfully!', 'success');
           this.resetForm();
           this.loadInsuranceRecords();
         },
         error: (error: any) => {
-          this.errorMessage = this.extractErrorMessage(error, 'Failed to add insurance record.');
+          this.showMessage(this.extractErrorMessage(error, 'Failed to add insurance record.'), 'error');
         }
       });
     }
@@ -121,11 +132,13 @@ export class InsuranceComponent implements OnInit {
   editInsurance(record: any): void {
     this.editing = true;
     this.editingId = record.insuranceId;
+
     this.successMessage = '';
     this.errorMessage = '';
 
+    // ✅ IMPORTANT: backend returns flattened DTO fields, not record.vehicle?.vehicleId
     this.insuranceForm.patchValue({
-      vehicleId: record.vehicle?.vehicleId || '',
+      vehicleId: record.vehicleId || '',
       providerName: record.providerName,
       policyNumber: record.policyNumber,
       startDate: record.startDate,
@@ -134,41 +147,27 @@ export class InsuranceComponent implements OnInit {
       coverageType: record.coverageType
     });
 
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   deleteInsurance(id: number): void {
-    if (!id) {
-      return;
-    }
+    if (!id) return;
 
     const confirmDelete = confirm('Are you sure you want to delete this insurance record?');
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    this.successMessage = '';
-    this.errorMessage = '';
+    if (!confirmDelete) return;
 
     this.httpService.deleteInsurance(id).subscribe({
       next: () => {
-        this.successMessage = 'Insurance record deleted successfully!';
+        this.showMessage('Insurance record deleted successfully!', 'success');
         this.loadInsuranceRecords();
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to delete insurance record.');
+        this.showMessage(this.extractErrorMessage(error, 'Failed to delete insurance record.'), 'error');
       }
     });
   }
 
   searchByProvider(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     if (!this.searchProviderName.trim()) {
       this.loadInsuranceRecords();
       return;
@@ -180,15 +179,12 @@ export class InsuranceComponent implements OnInit {
       },
       error: (error: any) => {
         this.insuranceRecords = [];
-        this.errorMessage = this.extractErrorMessage(error, 'No insurance records found.');
+        this.showMessage(this.extractErrorMessage(error, 'No insurance records found.'), 'error');
       }
     });
   }
 
   filterByCoverageType(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     if (!this.filterCoverageType) {
       this.loadInsuranceRecords();
       return;
@@ -200,21 +196,18 @@ export class InsuranceComponent implements OnInit {
       },
       error: (error: any) => {
         this.insuranceRecords = [];
-        this.errorMessage = this.extractErrorMessage(error, 'No insurance records found for selected coverage type.');
+        this.showMessage(this.extractErrorMessage(error, 'No insurance records found for selected coverage type.'), 'error');
       }
     });
   }
 
   sortByPremium(order: string): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     this.httpService.sortInsuranceByPremium(order).subscribe({
       next: (data: any[]) => {
         this.insuranceRecords = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to sort insurance records.');
+        this.showMessage(this.extractErrorMessage(error, 'Failed to sort insurance records.'), 'error');
       }
     });
   }
@@ -251,12 +244,7 @@ export class InsuranceComponent implements OnInit {
 
   isInvalid(controlName: string): boolean {
     const control = this.insuranceForm.get(controlName);
-
-    return !!(
-      control &&
-      control.invalid &&
-      (control.dirty || control.touched || this.submitted)
-    );
+    return !!(control && control.invalid && (control.dirty || control.touched || this.submitted));
   }
 
   hasDateRangeError(): boolean {
@@ -276,9 +264,7 @@ export class InsuranceComponent implements OnInit {
     const startDate = control.get('startDate')?.value;
     const endDate = control.get('endDate')?.value;
 
-    if (!startDate || !endDate) {
-      return null;
-    }
+    if (!startDate || !endDate) return null;
 
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -286,14 +272,11 @@ export class InsuranceComponent implements OnInit {
     if (end <= start) {
       return { endDateBeforeStartDate: true };
     }
-
     return null;
   }
 
   isExpiringSoon(endDate: string): boolean {
-    if (!endDate) {
-      return false;
-    }
+    if (!endDate) return false;
 
     const today = new Date();
     const expiryDate = new Date(endDate);
@@ -301,43 +284,21 @@ export class InsuranceComponent implements OnInit {
     today.setHours(0, 0, 0, 0);
     expiryDate.setHours(0, 0, 0, 0);
 
-    const differenceInTime = expiryDate.getTime() - today.getTime();
-    const differenceInDays = differenceInTime / (1000 * 60 * 60 * 24);
-
-    return differenceInDays >= 0 && differenceInDays <= 30;
+    const diffDays = (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays >= 0 && diffDays <= 30;
   }
 
-  getVehicleDisplay(vehicle: any): string {
-    if (!vehicle) {
-      return 'N/A';
-    }
-
-    const vehicleNumber = vehicle.vehicleNumber || '';
-    const brand = vehicle.brand || '';
-    const model = vehicle.model || '';
-
-    return `${vehicleNumber} - ${brand} ${model}`;
+  // ✅ FIXED: expects record (DTO) not record.vehicle
+  getVehicleDisplay(record: any): string {
+    if (!record || !record.vehicleNumber) return 'N/A';
+    return `${record.vehicleNumber} - ${record.brand || ''} ${record.model || ''}`.trim();
   }
 
   private extractErrorMessage(error: any, defaultMessage: string): string {
-    console.error('Insurance API error:', error);
-
-    if (error?.error?.message) {
-      return error.error.message;
-    }
-
-    if (error?.error?.error) {
-      return error.error.error;
-    }
-
-    if (typeof error?.error === 'string') {
-      return error.error;
-    }
-
-    if (error?.message) {
-      return error.message;
-    }
-
+    if (error?.error?.message) return error.error.message;
+    if (error?.error?.error) return error.error.error;
+    if (typeof error?.error === 'string') return error.error;
+    if (error?.message) return error.message;
     return defaultMessage;
   }
 }

@@ -28,6 +28,7 @@ public class InsuranceService {
      // Entity -> DTO mapper
      private InsuranceDTO mapToDTO(Insurance i) {
           InsuranceDTO dto = new InsuranceDTO();
+
           dto.setInsuranceId(i.getInsuranceId());
           dto.setProviderName(i.getProviderName());
           dto.setPolicyNumber(i.getPolicyNumber());
@@ -36,11 +37,15 @@ public class InsuranceService {
           dto.setPremiumAmount(i.getPremiumAmount());
           dto.setCoverageType(i.getCoverageType());
 
-          // optional vehicle info if your DTO has it
           if (i.getVehicle() != null) {
                dto.setVehicleId(i.getVehicle().getVehicleId());
                dto.setVehicleNumber(i.getVehicle().getVehicleNumber());
+
+               // ✅ FIX
+               dto.setBrand(i.getVehicle().getBrand());
+               dto.setModel(i.getVehicle().getModel());
           }
+
           return dto;
      }
 

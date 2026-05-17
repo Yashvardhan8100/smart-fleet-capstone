@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 public class MaintenanceRecordDTO {
 
-     // Add the required code here!
      private Long maintenanceId;
      private LocalDate serviceDate;
      private String serviceType;
@@ -16,20 +15,11 @@ public class MaintenanceRecordDTO {
      private Long vehicleId;
      private String vehicleNumber;
 
-     public MaintenanceRecordDTO() {
-     }
+     // ✅ ADD THESE
+     private String brand;
+     private String model;
 
-     public MaintenanceRecordDTO(Long maintenanceId, LocalDate serviceDate, String serviceType, String serviceCenter,
-               double serviceCost, LocalDate nextServiceDate, String remarks, Long vehicleId, String vehicleNumber) {
-          this.maintenanceId = maintenanceId;
-          this.serviceDate = serviceDate;
-          this.serviceType = serviceType;
-          this.serviceCenter = serviceCenter;
-          this.serviceCost = serviceCost;
-          this.nextServiceDate = nextServiceDate;
-          this.remarks = remarks;
-          this.vehicleId = vehicleId;
-          this.vehicleNumber = vehicleNumber;
+     public MaintenanceRecordDTO() {
      }
 
      public Long getMaintenanceId() {
@@ -104,4 +94,20 @@ public class MaintenanceRecordDTO {
           this.vehicleNumber = vehicleNumber;
      }
 
+     // ✅ NEW GETTERS/SETTERS
+     public String getBrand() {
+          return brand;
+     }
+
+     public void setBrand(String brand) {
+          this.brand = brand;
+     }
+
+     public String getModel() {
+          return model;
+     }
+
+     public void setModel(String model) {
+          this.model = model;
+     }
 }

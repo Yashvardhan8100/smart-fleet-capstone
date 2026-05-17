@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -7,7 +6,6 @@ import {
   Validators
 } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
-
 
 @Component({
   selector: 'app-maintenance',
@@ -36,7 +34,7 @@ export class MaintenanceComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private httpService: HttpService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.today = new Date().toISOString().split('T')[0];
@@ -60,13 +58,32 @@ export class MaintenanceComponent implements OnInit {
     this.loadMaintenanceRecords();
   }
 
+  /* ✅ MAIN FIX */
+  private showMessage(message: string, type: 'success' | 'error') {
+    if (type === 'success') {
+      this.successMessage = message;
+      this.errorMessage = '';
+    } else {
+      this.errorMessage = message;
+      this.successMessage = '';
+    }
+
+    setTimeout(() => {
+      this.successMessage = '';
+      this.errorMessage = '';
+    }, 3000);
+  }
+
   loadVehicles(): void {
     this.httpService.getAllVehicles().subscribe({
       next: (data: any[]) => {
         this.vehicles = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to load vehicles.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to load vehicles.'),
+          'error'
+        );
       }
     });
   }
@@ -77,15 +94,16 @@ export class MaintenanceComponent implements OnInit {
         this.maintenanceRecords = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to load maintenance records.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to load maintenance records.'),
+          'error'
+        );
       }
     });
   }
 
   saveMaintenance(): void {
     this.submitted = true;
-    this.successMessage = '';
-    this.errorMessage = '';
 
     if (this.maintenanceForm.invalid) {
       this.maintenanceForm.markAllAsTouched();
@@ -106,23 +124,29 @@ export class MaintenanceComponent implements OnInit {
     if (this.editing && this.editingId !== null) {
       this.httpService.updateMaintenance(this.editingId, maintenancePayload, vehicleId).subscribe({
         next: () => {
-          this.successMessage = 'Maintenance record updated successfully!';
+          this.showMessage('Maintenance record updated successfully!', 'success');
           this.resetForm();
           this.loadMaintenanceRecords();
         },
         error: (error: any) => {
-          this.errorMessage = this.extractErrorMessage(error, 'Failed to update maintenance record.');
+          this.showMessage(
+            this.extractErrorMessage(error, 'Failed to update maintenance record.'),
+            'error'
+          );
         }
       });
     } else {
       this.httpService.addMaintenance(maintenancePayload, vehicleId).subscribe({
         next: () => {
-          this.successMessage = 'Maintenance record added successfully!';
+          this.showMessage('Maintenance record added successfully!', 'success');
           this.resetForm();
           this.loadMaintenanceRecords();
         },
         error: (error: any) => {
-          this.errorMessage = this.extractErrorMessage(error, 'Failed to add maintenance record.');
+          this.showMessage(
+            this.extractErrorMessage(error, 'Failed to add maintenance record.'),
+            'error'
+          );
         }
       });
     }
@@ -131,8 +155,6 @@ export class MaintenanceComponent implements OnInit {
   editMaintenance(record: any): void {
     this.editing = true;
     this.editingId = record.maintenanceId;
-    this.successMessage = '';
-    this.errorMessage = '';
 
     this.maintenanceForm.patchValue({
       vehicleId: record.vehicle?.vehicleId || '',
@@ -151,34 +173,26 @@ export class MaintenanceComponent implements OnInit {
   }
 
   deleteMaintenance(id: number): void {
-    if (!id) {
-      return;
-    }
+    if (!id) return;
 
     const confirmDelete = confirm('Are you sure you want to delete this maintenance record?');
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    this.successMessage = '';
-    this.errorMessage = '';
+    if (!confirmDelete) return;
 
     this.httpService.deleteMaintenance(id).subscribe({
       next: () => {
-        this.successMessage = 'Maintenance record deleted successfully!';
+        this.showMessage('Maintenance record deleted successfully!', 'success');
         this.loadMaintenanceRecords();
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to delete maintenance record.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to delete maintenance record.'),
+          'error'
+        );
       }
     });
   }
 
   searchByServiceType(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     if (!this.searchServiceType.trim()) {
       this.loadMaintenanceRecords();
       return;
@@ -190,15 +204,15 @@ export class MaintenanceComponent implements OnInit {
       },
       error: (error: any) => {
         this.maintenanceRecords = [];
-        this.errorMessage = this.extractErrorMessage(error, 'No maintenance records found.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'No maintenance records found.'),
+          'error'
+        );
       }
     });
   }
 
   filterByServiceDate(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     if (!this.filterDate) {
       this.loadMaintenanceRecords();
       return;
@@ -210,21 +224,24 @@ export class MaintenanceComponent implements OnInit {
       },
       error: (error: any) => {
         this.maintenanceRecords = [];
-        this.errorMessage = this.extractErrorMessage(error, 'No records found for selected service date.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'No records found for selected service date.'),
+          'error'
+        );
       }
     });
   }
 
   sortByCost(order: string): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     this.httpService.sortMaintenanceByCost(order).subscribe({
       next: (data: any[]) => {
         this.maintenanceRecords = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to sort maintenance records.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to sort maintenance records.'),
+          'error'
+        );
       }
     });
   }
@@ -232,8 +249,6 @@ export class MaintenanceComponent implements OnInit {
   resetFilters(): void {
     this.searchServiceType = '';
     this.filterDate = '';
-    this.successMessage = '';
-    this.errorMessage = '';
     this.loadMaintenanceRecords();
   }
 
@@ -255,8 +270,6 @@ export class MaintenanceComponent implements OnInit {
 
   cancelEdit(): void {
     this.resetForm();
-    this.successMessage = '';
-    this.errorMessage = '';
   }
 
   isInvalid(controlName: string): boolean {
@@ -283,9 +296,7 @@ export class MaintenanceComponent implements OnInit {
   serviceDateNotFutureValidator(control: AbstractControl): { [key: string]: boolean } | null {
     const serviceDate = control.get('serviceDate')?.value;
 
-    if (!serviceDate) {
-      return null;
-    }
+    if (!serviceDate) return null;
 
     const selectedDate = new Date(serviceDate);
     const todayDate = new Date();
@@ -301,9 +312,7 @@ export class MaintenanceComponent implements OnInit {
   }
 
   isUpcomingService(nextServiceDate: string): boolean {
-    if (!nextServiceDate) {
-      return false;
-    }
+    if (!nextServiceDate) return false;
 
     const todayDate = new Date();
     const targetDate = new Date(nextServiceDate);
@@ -311,43 +320,21 @@ export class MaintenanceComponent implements OnInit {
     todayDate.setHours(0, 0, 0, 0);
     targetDate.setHours(0, 0, 0, 0);
 
-    const diffTime = targetDate.getTime() - todayDate.getTime();
-    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    const diffDays = (targetDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24);
 
     return diffDays >= 0 && diffDays <= 30;
   }
 
-  getVehicleDisplay(vehicle: any): string {
-    if (!vehicle) {
-      return 'N/A';
-    }
-
-    const vehicleNumber = vehicle.vehicleNumber || '';
-    const brand = vehicle.brand || '';
-    const model = vehicle.model || '';
-
-    return `${vehicleNumber} - ${brand} ${model}`.trim();
+  getVehicleDisplay(record: any): string {
+    if (!record.vehicleNumber) return 'N/A';
+    return `${record.vehicleNumber} - ${record.brand} ${record.model}`;
   }
 
   private extractErrorMessage(error: any, defaultMessage: string): string {
-    console.error('Maintenance API error:', error);
-
-    if (error?.error?.message) {
-      return error.error.message;
-    }
-
-    if (error?.error?.error) {
-      return error.error.error;
-    }
-
-    if (typeof error?.error === 'string') {
-      return error.error;
-    }
-
-    if (error?.message) {
-      return error.message;
-    }
-
+    if (error?.error?.message) return error.error.message;
+    if (error?.error?.error) return error.error.error;
+    if (typeof error?.error === 'string') return error.error;
+    if (error?.message) return error.message;
     return defaultMessage;
   }
 }

@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @Service
 public class MaintenanceRecordService {
 
-     //Add the required code here!
-       @Autowired
+    // Add the required code here!
+    @Autowired
     private MaintenanceRecordRepository maintenanceRepo;
 
     @Autowired
@@ -49,6 +49,8 @@ public class MaintenanceRecordService {
         if (m.getVehicle() != null) {
             dto.setVehicleId(m.getVehicle().getVehicleId());
             dto.setVehicleNumber(m.getVehicle().getVehicleNumber());
+            dto.setBrand(m.getVehicle().getBrand()); // ✅ ADD
+            dto.setModel(m.getVehicle().getModel()); // ✅ ADD
         }
 
         return dto;
@@ -177,7 +179,7 @@ public class MaintenanceRecordService {
 
     /**
      * ✅ TEST EXPECTED:
-     * sortByServiceCost(String order)  (asc/desc)
+     * sortByServiceCost(String order) (asc/desc)
      *
      * Repo methods:
      * - findAllSortedByCostAsc()
@@ -186,10 +188,9 @@ public class MaintenanceRecordService {
      * API: GET /api/maintenance/sort/cost?order=asc|desc
      */
     public List<MaintenanceRecordDTO> sortByServiceCost(String order) {
-        List<MaintenanceRecord> list =
-                "desc".equalsIgnoreCase(order)
-                        ? maintenanceRepo.findAllSortedByCostDesc()
-                        : maintenanceRepo.findAllSortedByCostAsc();
+        List<MaintenanceRecord> list = "desc".equalsIgnoreCase(order)
+                ? maintenanceRepo.findAllSortedByCostDesc()
+                : maintenanceRepo.findAllSortedByCostAsc();
 
         return list.stream()
                 .map(this::mapToDTO)

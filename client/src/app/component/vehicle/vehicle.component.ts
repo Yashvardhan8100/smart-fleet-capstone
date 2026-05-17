@@ -1,8 +1,6 @@
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
-
 
 @Component({
   selector: 'app-vehicle',
@@ -30,7 +28,7 @@ export class VehicleComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private httpService: HttpService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.vehicleForm = this.fb.group({
@@ -48,13 +46,32 @@ export class VehicleComponent implements OnInit {
     this.loadDrivers();
   }
 
+  /* ✅ MAIN FIX */
+  private showMessage(message: string, type: 'success' | 'error') {
+    if (type === 'success') {
+      this.successMessage = message;
+      this.errorMessage = '';
+    } else {
+      this.errorMessage = message;
+      this.successMessage = '';
+    }
+
+    setTimeout(() => {
+      this.successMessage = '';
+      this.errorMessage = '';
+    }, 3000);
+  }
+
   loadVehicles(): void {
     this.httpService.getAllVehicles().subscribe({
       next: (data: any[]) => {
         this.vehicles = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to load vehicles.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to load vehicles.'),
+          'error'
+        );
       }
     });
   }
@@ -65,15 +82,16 @@ export class VehicleComponent implements OnInit {
         this.drivers = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to load drivers.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to load drivers.'),
+          'error'
+        );
       }
     });
   }
 
   saveVehicle(): void {
     this.submitted = true;
-    this.successMessage = '';
-    this.errorMessage = '';
 
     if (this.vehicleForm.invalid) {
       this.vehicleForm.markAllAsTouched();
@@ -94,23 +112,29 @@ export class VehicleComponent implements OnInit {
     if (this.editing && this.editingId !== null) {
       this.httpService.updateVehicle(this.editingId, vehiclePayload).subscribe({
         next: () => {
-          this.successMessage = 'Vehicle updated successfully!';
+          this.showMessage('Vehicle updated successfully!', 'success');
           this.resetForm();
           this.loadVehicles();
         },
         error: (error: any) => {
-          this.errorMessage = this.extractErrorMessage(error, 'Failed to update vehicle.');
+          this.showMessage(
+            this.extractErrorMessage(error, 'Failed to update vehicle.'),
+            'error'
+          );
         }
       });
     } else {
       this.httpService.addVehicle(vehiclePayload).subscribe({
         next: () => {
-          this.successMessage = 'Vehicle added successfully!';
+          this.showMessage('Vehicle added successfully!', 'success');
           this.resetForm();
           this.loadVehicles();
         },
         error: (error: any) => {
-          this.errorMessage = this.extractErrorMessage(error, 'Failed to add vehicle.');
+          this.showMessage(
+            this.extractErrorMessage(error, 'Failed to add vehicle.'),
+            'error'
+          );
         }
       });
     }
@@ -119,8 +143,6 @@ export class VehicleComponent implements OnInit {
   editVehicle(vehicle: any): void {
     this.editing = true;
     this.editingId = vehicle.vehicleId;
-    this.successMessage = '';
-    this.errorMessage = '';
 
     this.vehicleForm.patchValue({
       vehicleNumber: vehicle.vehicleNumber,
@@ -140,34 +162,26 @@ export class VehicleComponent implements OnInit {
   }
 
   deleteVehicle(id: number): void {
-    if (!id) {
-      return;
-    }
+    if (!id) return;
 
     const confirmDelete = confirm('Are you sure you want to delete this vehicle?');
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    this.successMessage = '';
-    this.errorMessage = '';
+    if (!confirmDelete) return;
 
     this.httpService.deleteVehicle(id).subscribe({
       next: () => {
-        this.successMessage = 'Vehicle deleted successfully!';
+        this.showMessage('Vehicle deleted successfully!', 'success');
         this.loadVehicles();
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to delete vehicle.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to delete vehicle.'),
+          'error'
+        );
       }
     });
   }
 
   searchByVehicleNumber(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     if (!this.searchVehicleNumber.trim()) {
       this.loadVehicles();
       return;
@@ -179,15 +193,15 @@ export class VehicleComponent implements OnInit {
       },
       error: (error: any) => {
         this.vehicles = [];
-        this.errorMessage = this.extractErrorMessage(error, 'No vehicle found with this number.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'No vehicle found with this number.'),
+          'error'
+        );
       }
     });
   }
 
   searchByBrand(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     if (!this.searchBrand.trim()) {
       this.loadVehicles();
       return;
@@ -199,15 +213,15 @@ export class VehicleComponent implements OnInit {
       },
       error: (error: any) => {
         this.vehicles = [];
-        this.errorMessage = this.extractErrorMessage(error, 'No vehicles found for this brand.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'No vehicles found for this brand.'),
+          'error'
+        );
       }
     });
   }
 
   filterByStatus(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     if (!this.filterStatus) {
       this.loadVehicles();
       return;
@@ -219,35 +233,38 @@ export class VehicleComponent implements OnInit {
       },
       error: (error: any) => {
         this.vehicles = [];
-        this.errorMessage = this.extractErrorMessage(error, 'No vehicles found for selected status.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'No vehicles found for selected status.'),
+          'error'
+        );
       }
     });
   }
 
   sortByYear(order: string): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     this.httpService.sortVehiclesByYear(order).subscribe({
       next: (data: any[]) => {
         this.vehicles = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to sort vehicles by year.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to sort vehicles by year.'),
+          'error'
+        );
       }
     });
   }
 
   sortByMileage(order: string): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-
     this.httpService.sortVehiclesByMileage(order).subscribe({
       next: (data: any[]) => {
         this.vehicles = data;
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to sort vehicles by mileage.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to sort vehicles by mileage.'),
+          'error'
+        );
       }
     });
   }
@@ -255,23 +272,21 @@ export class VehicleComponent implements OnInit {
   assignDriverToVehicle(vehicleId: number, event: Event): void {
     const selectedValue = (event.target as HTMLSelectElement).value;
 
-    if (!vehicleId || !selectedValue) {
-      return;
-    }
+    if (!vehicleId || !selectedValue) return;
 
     const driverId = Number(selectedValue);
 
-    this.successMessage = '';
-    this.errorMessage = '';
-
     this.httpService.assignDriver(vehicleId, driverId).subscribe({
       next: () => {
-        this.successMessage = 'Driver assigned successfully!';
+        this.showMessage('Driver assigned successfully!', 'success');
         this.loadVehicles();
         this.loadDrivers();
       },
       error: (error: any) => {
-        this.errorMessage = this.extractErrorMessage(error, 'Failed to assign driver.');
+        this.showMessage(
+          this.extractErrorMessage(error, 'Failed to assign driver.'),
+          'error'
+        );
       }
     });
   }
@@ -280,8 +295,6 @@ export class VehicleComponent implements OnInit {
     this.searchVehicleNumber = '';
     this.searchBrand = '';
     this.filterStatus = '';
-    this.successMessage = '';
-    this.errorMessage = '';
     this.loadVehicles();
   }
 
@@ -304,8 +317,6 @@ export class VehicleComponent implements OnInit {
 
   cancelEdit(): void {
     this.resetForm();
-    this.successMessage = '';
-    this.errorMessage = '';
   }
 
   isInvalid(controlName: string): boolean {
@@ -319,10 +330,7 @@ export class VehicleComponent implements OnInit {
   }
 
   getDriverName(vehicle: any): string {
-    if (!vehicle || !vehicle.driver) {
-      return 'Not Assigned';
-    }
-
+    if (!vehicle || !vehicle.driver) return 'Not Assigned';
     return vehicle.driver.driverName || 'Not Assigned';
   }
 
@@ -331,24 +339,10 @@ export class VehicleComponent implements OnInit {
   }
 
   private extractErrorMessage(error: any, defaultMessage: string): string {
-    console.error('Vehicle API error:', error);
-
-    if (error?.error?.message) {
-      return error.error.message;
-    }
-
-    if (error?.error?.error) {
-      return error.error.error;
-    }
-
-    if (typeof error?.error === 'string') {
-      return error.error;
-    }
-
-    if (error?.message) {
-      return error.message;
-    }
-
+    if (error?.error?.message) return error.error.message;
+    if (error?.error?.error) return error.error.error;
+    if (typeof error?.error === 'string') return error.error;
+    if (error?.message) return error.message;
     return defaultMessage;
   }
 }

@@ -1,8 +1,6 @@
 package com.edutech.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.edutech.entity.Vehicle;
@@ -12,36 +10,32 @@ import java.util.Optional;
 
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
-     // Find by exact vehicle number
-     @Query("SELECT v FROM Vehicle v WHERE v.vehicleNumber = :vehicleNumber")
-     Optional<Vehicle> findByVehicleNumber(@Param("vehicleNumber") String vehicleNumber);
 
-     // Search by brand (case-insensitive)
-     @Query("SELECT v FROM Vehicle v WHERE LOWER(v.brand) LIKE LOWER(CONCAT('%', :brand, '%'))")
-     List<Vehicle> findByBrandIgnoreCase(@Param("brand") String brand);
+    // ✅ Find by exact vehicle number
+    Optional<Vehicle> findByVehicleNumber(String vehicleNumber);
 
-     // Filter by status
-     @Query("SELECT v FROM Vehicle v WHERE v.status = :status")
-     List<Vehicle> findByStatus(@Param("status") String status);
+    // ✅ Check if vehicle number exists
+    boolean existsByVehicleNumber(String vehicleNumber);
 
-     // Sort by manufacturing year ascending
-     @Query("SELECT v FROM Vehicle v ORDER BY v.manufacturingYear ASC")
-     List<Vehicle> findAllSortedByYearAsc();
+    // ✅ Search by brand (case-insensitive)
+    List<Vehicle> findByBrandIgnoreCaseContaining(String brand);
 
-     // Sort by manufacturing year descending
-     @Query("SELECT v FROM Vehicle v ORDER BY v.manufacturingYear DESC")
-     List<Vehicle> findAllSortedByYearDesc();
+    // ✅ Filter by status
+    List<Vehicle> findByStatus(String status);
 
-     // Sort by mileage ascending
-     @Query("SELECT v FROM Vehicle v ORDER BY v.mileage ASC")
-     List<Vehicle> findAllSortedByMileageAsc();
+    // ✅ Sort by manufacturing year ascending
+    List<Vehicle> findAllByOrderByManufacturingYearAsc();
 
-     // Sort by mileage descending
-     @Query("SELECT v FROM Vehicle v ORDER BY v.mileage DESC")
-     List<Vehicle> findAllSortedByMileageDesc();
+    // ✅ Sort by manufacturing year descending
+    List<Vehicle> findAllByOrderByManufacturingYearDesc();
 
-     // Check if vehicle number already exists
-     @Query("SELECT CASE WHEN COUNT(v) > 0 THEN true ELSE false END FROM Vehicle v WHERE v.vehicleNumber = :vehicleNumber")
-     boolean existsByVehicleNumber(@Param("vehicleNumber") String vehicleNumber);
+    // ✅ Sort by mileage ascending
+    List<Vehicle> findAllByOrderByMileageAsc();
 
+    // ✅ Sort by mileage descending
+    List<Vehicle> findAllByOrderByMileageDesc();
+
+    // ✅ ✅ ✅ CRITICAL FIX (Relationship handling)
+    // Find all vehicles assigned to a specific driver
+    List<Vehicle> findByDriverDriverId(Long driverId);
 }

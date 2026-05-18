@@ -1,614 +1,180 @@
-<!-- ============================================ -->
-<!-- PHASE 1 — SPLASH INTRO                       -->
-<!-- ============================================ -->
-<div class="splash-screen" *ngIf="phase === 'splash'">
+<div class="login-page">
 
-  <div class="starfield">
-    <div class="star star-1"></div>
-    <div class="star star-2"></div>
-    <div class="star star-3"></div>
-    <div class="star star-4"></div>
-    <div class="star star-5"></div>
-  </div>
+  <!-- ✅ TOP LEFT CORNER -->
+  <a class="back-link" (click)="goHome()">← Back to Home</a>
 
-  <div class="scan-line"></div>
-  <div class="splash-grid"></div>
+  <div class="login-layout">
 
-  <div class="ticker-bar">
-    <div class="ticker-content">
-      <span class="ticker-dot"></span>
-      <span>SYSTEM ONLINE</span>
-      <span>·</span>
-      <span>{{ counterVehicles | number }} vehicles active</span>
-      <span>·</span>
-      <span>{{ counterUptime }}.98% uptime</span>
-      <span>·</span>
-      <span>Live tracking enabled</span>
-      <span>·</span>
-      <span>{{ counterFleets | number }} fleets managed</span>
-    </div>
-  </div>
-
-  <div class="splash-content">
-    <div class="splash-logo">
-      <div class="logo-ring">
-        <div class="logo-inner">🚚</div>
-      </div>
-    </div>
-
-    <div class="splash-eyebrow">Enterprise Fleet Intelligence Platform</div>
-    <h1 class="splash-title">SmartFleet Pro</h1>
-    <p class="splash-subtitle">Command Every Mile</p>
-
-    <div class="counter-grid">
-      <div class="counter-card">
-        <div class="counter-value">{{ counterVehicles | number }}</div>
-        <div class="counter-label">Vehicles Active</div>
-      </div>
-      <div class="counter-card">
-        <div class="counter-value">{{ counterFleets | number }}</div>
-        <div class="counter-label">Fleets Managed</div>
-      </div>
-      <div class="counter-card">
-        <div class="counter-value">{{ counterUptime }}.98%</div>
-        <div class="counter-label">Platform Uptime</div>
-      </div>
-      <div class="counter-card">
-        <div class="counter-value">{{ counterDrivers | number }}</div>
-        <div class="counter-label">Drivers Online</div>
-      </div>
-    </div>
-
-    <div class="feature-chips">
-      <span class="chip">📡 GPS Tracking</span>
-      <span class="chip">⚙️ Maintenance</span>
-      <span class="chip">📊 Analytics</span>
-      <span class="chip">🛡️ Insurance</span>
-      <span class="chip">👤 Driver Mgmt</span>
-      <span class="chip">🔒 JWT Security</span>
-    </div>
-
-    <button class="splash-cta" (click)="skipToAuth()">
-      Access Command Center <span>→</span>
-    </button>
-
-    <div class="splash-skip">
-      Auto-entering in <strong>7.5s</strong> · or click above to enter now
-    </div>
-  </div>
-
-</div>
-
-<!-- ============================================ -->
-<!-- PHASE 2 — AUTH (Login / Register)            -->
-<!-- ============================================ -->
-<div class="auth-screen" *ngIf="phase === 'auth'">
-
-  <div class="auth-bg-layer"></div>
-  <div class="auth-bg-overlay"></div>
-  <div class="auth-noise"></div>
-  <div class="auth-grid-layer"></div>
-  <div class="auth-particles"></div>
-
-  <svg class="auth-route-map" viewBox="0 0 900 600" preserveAspectRatio="none">
-    <defs>
-      <filter id="authGlow">
-        <feGaussianBlur stdDeviation="4" result="blur" />
-        <feMerge>
-          <feMergeNode in="blur" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
-    <path class="route-path route-main"
-      d="M70,460 C180,380 200,300 330,330 C470,370 480,160 620,190 C735,215 765,130 850,95" />
-    <path class="route-path route-secondary"
-      d="M120,120 C230,190 300,150 380,210 C470,285 560,260 630,330 C700,400 760,385 830,455" />
-    <circle class="route-dot" cx="330" cy="330" r="7"></circle>
-    <circle class="route-dot" cx="620" cy="190" r="7"></circle>
-    <circle class="route-dot" cx="850" cy="95" r="7"></circle>
-    <circle class="route-ping" cx="330" cy="330" r="14"></circle>
-    <circle class="route-ping ping-2" cx="620" cy="190" r="14"></circle>
-    <circle class="route-ping ping-3" cx="850" cy="95" r="14"></circle>
-  </svg>
-
-  <div class="auth-layout">
-
-    <!-- LEFT PANEL -->
+    <!-- LEFT -->
     <section class="left-panel">
-      <div class="live-bar">
-        <span class="live-dot"></span>
-        <span>2,847 vehicles active</span>
-        <span>·</span>
-        <span>99.98% uptime</span>
-        <span>·</span>
-        <span>Live tracking ON</span>
-      </div>
-
       <div class="left-content">
-        <div class="left-eyebrow">Enterprise Fleet Intelligence</div>
-        <h1>Command<br />Every Mile</h1>
-        <p class="left-desc">
-          Real-time vehicle visibility, operational precision, maintenance control,
-          and logistics intelligence built for high-performance fleet teams.
-        </p>
-
-        <div class="feature-cards">
-          <div class="feature-card">
-            <div class="fc-icon">📡</div>
-            <div>
-              <strong>Live GPS Tracking</strong>
-              <p>Real-time vehicle positions with 48ms latency</p>
-            </div>
-          </div>
-          <div class="feature-card">
-            <div class="fc-icon">⚙️</div>
-            <div>
-              <strong>Smart Maintenance</strong>
-              <p>Predictive scheduling with automated alerts</p>
-            </div>
-          </div>
-          <div class="feature-card">
-            <div class="fc-icon">📊</div>
-            <div>
-              <strong>Fleet Analytics</strong>
-              <p>Comprehensive dashboards with cost insights</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="left-stats">
-          <div><strong>48ms</strong><span>avg latency</span></div>
-          <div><strong>24/7</strong><span>fleet visibility</span></div>
-          <div><strong>99.98%</strong><span>uptime</span></div>
-        </div>
+        <h1>Command <span class="grad">Every Mile</span></h1>
+        <p>Real-time vehicle visibility, maintenance control, and fleet intelligence.</p>
       </div>
     </section>
 
-    <!-- RIGHT PANEL -->
+    <!-- RIGHT -->
     <section class="right-panel">
+
       <div class="auth-card">
-        <div class="auth-card-glow"></div>
 
-        <div class="auth-topbar">
-          <div class="auth-chip">
-            <span class="green-dot"></span>
-            Secure Gateway
-          </div>
-          <div class="auth-clock">
-            <span>LIVE OPS</span>
-            <strong>IST</strong>
-          </div>
-        </div>
-
-        <div class="auth-brand">
-          <div class="auth-logo">🚚</div>
+        <!-- BRAND -->
+        <div class="brand">
+          <span class="brand-icon">🚚</span>
           <div>
             <h2>SmartFleet Pro</h2>
-            <p>Command Every Mile</p>
+            <small>Command Every Mile</small>
           </div>
         </div>
 
-        <!-- Tabs (hidden during forgot mode) -->
-        <div class="auth-tabs" *ngIf="!forgotMode">
-          <button [class.active]="activeTab === 'login'" (click)="switchTab('login')">Login</button>
-          <button [class.active]="activeTab === 'register'" (click)="switchTab('register')">Register</button>
-          <div class="tab-indicator" [class.tab-right]="activeTab === 'register'"></div>
-        </div>
+        <!-- ✅ LOGIN FORM -->
+        <div *ngIf="!forgotMode">
 
-        <!-- ============================== -->
-        <!-- LOGIN FORM                      -->
-        <!-- ============================== -->
-        <div class="form-container" *ngIf="activeTab === 'login' && !forgotMode">
-
-          <div class="form-heading">
-            <h3>Access Control Center</h3>
-            <p>Login with your username or email address.</p>
-          </div>
+          <h3>Login to your account</h3>
 
           <div class="alert-error" *ngIf="loginError">
-            ⚠️ {{ loginError }}
+            {{ loginError }}
           </div>
 
-          <div class="login-success-overlay" *ngIf="loginSuccess">
-            <div class="success-check">✓</div>
-            <p>Access Granted — Loading Dashboard...</p>
-          </div>
+          <form [formGroup]="loginForm" (ngSubmit)="handleLogin()">
 
-          <form [formGroup]="loginForm" (ngSubmit)="handleLogin()" novalidate>
+            <!-- ✅ USERNAME -->
+            <div class="field icon-field">
+              <span class="icon">✉️</span>
 
-            <div class="field">
-              <label>Email / Username</label>
-              <div class="input-shell">
-                <span class="input-icon">✉</span>
-                <input type="text" placeholder="username or email@company.com" formControlName="username"
-                  [class.is-invalid]="isLoginInvalid('username')" />
-              </div>
-              <small class="error"
-                *ngIf="isLoginInvalid('username') && loginForm.get('username')?.hasError('required')">
-                Username or email is required.
+              <input
+                placeholder="Username or Email"
+                formControlName="username"
+                [class.input-error]="isLoginInvalid('username')" />
+
+              <!-- ✅ ERROR -->
+              <small class="err" *ngIf="isLoginInvalid('username')">
+                Username or Email is required
               </small>
             </div>
 
-            <div class="field">
-              <label>Password</label>
-              <div class="input-shell">
-                <span class="input-icon">🔒</span>
-                <input type="password" placeholder="Enter secure password" formControlName="password"
-                  [class.is-invalid]="isLoginInvalid('password')" />
-              </div>
-              <small class="error"
-                *ngIf="isLoginInvalid('password') && loginForm.get('password')?.hasError('required')">
-                Password is required.
+            <!-- ✅ PASSWORD -->
+            <div class="field icon-field">
+              <span class="icon">🔒</span>
+
+              <input
+                type="password"
+                placeholder="Password"
+                formControlName="password"
+                [class.input-error]="isLoginInvalid('password')" />
+
+              <!-- ✅ ERROR -->
+              <small class="err" *ngIf="isLoginInvalid('password')">
+                Password is required
               </small>
             </div>
 
-            <div class="login-options">
-              <label class="remember-toggle">
-                <input type="checkbox" />
-                <span class="switch"></span>
-                <span>Remember device</span>
-              </label>
-              <a href="javascript:void(0)" (click)="showForgot()">Forgot password?</a>
-            </div>
-
-            <button type="submit" class="auth-submit-btn" [disabled]="loginLoading">
-              {{ loginLoading ? '⏳ Authenticating...' : 'Access Dashboard →' }}
+            <!-- BUTTON -->
+            <button type="submit" class="btn-primary full">
+              {{ loginLoading ? 'Authenticating...' : 'Login' }}
             </button>
 
           </form>
 
-          <div class="divider"><span>or continue with SSO</span></div>
-
-          <div class="sso-grid">
-            <button type="button"><span>G</span> Google</button>
-            <button type="button"><span>▦</span> Microsoft</button>
+          <div class="auth-links">
+            <a (click)="showForgot()">Forgot password?</a>
+            <p>Don't have an account? <a (click)="goRegister()">Register</a></p>
           </div>
 
         </div>
 
-        <!-- ============================== -->
-        <!-- FORGOT PASSWORD                 -->
-        <!-- ============================== -->
-        <div class="form-container" *ngIf="forgotMode">
+        <!-- ✅ FORGOT PASSWORD -->
+        <div *ngIf="forgotMode">
 
-          <button type="button" class="forgot-back-btn" (click)="backToLogin()">
-            ← Back to Login
-          </button>
+          <a class="forgot-back" (click)="backToLogin()">← Back to Login</a>
 
-          <div class="forgot-steps">
-            <div class="forgot-step" [class.step-active]="forgotStep === 'email'"
-              [class.step-done]="forgotStep !== 'email'">
-              <span>1</span>
-              <small>Email</small>
-            </div>
-            <div class="forgot-step-line" [class.line-active]="forgotStep !== 'email'"></div>
-            <div class="forgot-step" [class.step-active]="forgotStep === 'otp'"
-              [class.step-done]="forgotStep === 'reset' || forgotStep === 'success'">
-              <span>2</span>
-              <small>Verify</small>
-            </div>
-            <div class="forgot-step-line" [class.line-active]="forgotStep === 'reset' || forgotStep === 'success'">
-            </div>
-            <div class="forgot-step" [class.step-active]="forgotStep === 'reset'"
-              [class.step-done]="forgotStep === 'success'">
-              <span>3</span>
-              <small>Reset</small>
-            </div>
-          </div>
-
-          <!-- STEP 1 — Enter Email -->
+          <!-- STEP 1 -->
           <div *ngIf="forgotStep === 'email'">
-            <div class="form-heading">
-              <h3>🔐 Forgot Password</h3>
-              <p>Enter your registered email to receive a verification OTP.</p>
+            <h3>Forgot Password</h3>
+            <p class="muted">Enter your registered email to receive OTP.</p>
+
+            <div class="alert-error" *ngIf="forgotError">
+              {{ forgotError }}
             </div>
 
-            <div class="alert-error" *ngIf="forgotError">⚠️ {{ forgotError }}</div>
+            <input placeholder="Email Address" [(ngModel)]="forgotEmail" />
 
-            <div class="field">
-              <label>Registered Email</label>
-              <div class="input-shell">
-                <span class="input-icon">✉</span>
-                <input type="email" placeholder="Enter your registered email" [(ngModel)]="forgotEmail" />
-              </div>
-            </div>
+            <button class="btn-primary full"
+              (click)="forgotSendOtp()"
+              [disabled]="forgotOtpSending">
 
-            <button type="button" class="auth-submit-btn" (click)="forgotSendOtp()" [disabled]="forgotOtpSending">
-              {{ forgotOtpSending ? '⏳ Sending OTP...' : 'Send OTP →' }}
+              {{ forgotOtpSending ? 'Sending...' : 'Send OTP' }}
             </button>
           </div>
 
-          <!-- STEP 2 — Verify OTP -->
+          <!-- STEP 2 -->
           <div *ngIf="forgotStep === 'otp'">
-            <div class="form-heading">
-              <h3>📧 Verify OTP</h3>
-              <p>Enter the 6-digit code sent to <strong>{{ forgotEmail }}</strong></p>
+            <h3>Verify OTP</h3>
+
+            <div class="alert-error" *ngIf="forgotError">
+              {{ forgotError }}
             </div>
 
-            <div class="alert-success" *ngIf="forgotMessage">✅ {{ forgotMessage }}</div>
-            <div class="alert-error" *ngIf="forgotError">⚠️ {{ forgotError }}</div>
-
-            <div class="field">
-              <label>Enter OTP</label>
-              <div class="otp-row">
-                <input type="text" class="otp-input otp-input-lg" placeholder="______" maxlength="6"
-                  [(ngModel)]="forgotOtpCode" />
-                <button type="button" class="otp-verify-btn" (click)="forgotVerifyOtp()"
-                  [disabled]="forgotOtpVerifying || forgotOtpCode.length !== 6">
-                  {{ forgotOtpVerifying ? '⏳' : '✓ Verify' }}
-                </button>
-              </div>
+            <div class="alert-success" *ngIf="forgotMessage">
+              {{ forgotMessage }}
             </div>
 
-            <div class="otp-actions">
-              <small class="otp-timer-text" *ngIf="forgotOtpTimer > 0">
-                Resend in {{ forgotOtpTimer }}s
-              </small>
-              <button type="button" class="otp-resend" (click)="forgotResendOtp()"
-                *ngIf="forgotOtpTimer === 0 && forgotOtpSent">
-                🔄 Resend OTP
-              </button>
-            </div>
+            <input placeholder="6-digit OTP"
+                   maxlength="6"
+                   [(ngModel)]="forgotOtpCode" />
+
+            <button class="btn-primary full"
+              (click)="forgotVerifyOtp()"
+              [disabled]="forgotOtpVerifying">
+
+              {{ forgotOtpVerifying ? 'Verifying...' : 'Verify OTP' }}
+            </button>
+
+            <p class="muted" *ngIf="forgotOtpTimer > 0">
+              Resend in {{ forgotOtpTimer }}s
+            </p>
+
+            <a *ngIf="forgotOtpTimer === 0"
+              (click)="forgotResendOtp()">
+              Resend OTP
+            </a>
           </div>
 
-          <!-- STEP 3 — New Password -->
+          <!-- STEP 3 -->
           <div *ngIf="forgotStep === 'reset'">
-            <div class="form-heading">
-              <h3>🔑 Set New Password</h3>
-              <p>Create a strong password for your account.</p>
+            <h3>Set New Password</h3>
+
+            <div class="alert-error" *ngIf="forgotError">
+              {{ forgotError }}
             </div>
 
-            <div class="alert-success" *ngIf="forgotMessage">✅ {{ forgotMessage }}</div>
-            <div class="alert-error" *ngIf="forgotError">⚠️ {{ forgotError }}</div>
+            <input type="password"
+                   placeholder="New Password"
+                   [(ngModel)]="forgotNewPassword"
+                   (input)="checkForgotPasswordRules()" />
 
-            <div class="field">
-              <label>New Password</label>
-              <div class="input-shell">
-                <span class="input-icon">🔒</span>
-                <input type="password" placeholder="Enter new password" [(ngModel)]="forgotNewPassword"
-                  (input)="checkForgotPasswordRules()" />
-              </div>
+            <input type="password"
+                   placeholder="Confirm Password"
+                   [(ngModel)]="forgotConfirmPassword" />
 
-              <div class="strength-bar" *ngIf="forgotPasswordTouched">
-                <div class="str-seg" [class.s1]="forgotPassedRules >= 1" [class.s2]="forgotPassedRules >= 2"
-                  [class.s3]="forgotPassedRules >= 3" [class.s4]="forgotPassedRules >= 4"
-                  [class.s5]="forgotPassedRules >= 5"></div>
-                <div class="str-seg" [class.s2]="forgotPassedRules >= 2" [class.s3]="forgotPassedRules >= 3"
-                  [class.s4]="forgotPassedRules >= 4" [class.s5]="forgotPassedRules >= 5"></div>
-                <div class="str-seg" [class.s3]="forgotPassedRules >= 3" [class.s4]="forgotPassedRules >= 4"
-                  [class.s5]="forgotPassedRules >= 5"></div>
-                <div class="str-seg" [class.s4]="forgotPassedRules >= 4" [class.s5]="forgotPassedRules >= 5"></div>
-                <div class="str-seg" [class.s5]="forgotPassedRules >= 5"></div>
-                <small>
-                  <span *ngIf="forgotPassedRules <= 1">Weak</span>
-                  <span *ngIf="forgotPassedRules === 2">Fair</span>
-                  <span *ngIf="forgotPassedRules === 3">Good</span>
-                  <span *ngIf="forgotPassedRules === 4">Strong</span>
-                  <span *ngIf="forgotPassedRules === 5">Excellent ✓</span>
-                </small>
-              </div>
+            <button class="btn-primary full"
+              (click)="forgotResetPassword()"
+              [disabled]="forgotResetting">
 
-              <div class="pwd-rules" *ngIf="forgotPasswordTouched">
-                <div [class.pass]="forgotPasswordRules.minLength">{{ forgotPasswordRules.minLength ? '✅' : '❌' }} Min 8
-                  chars</div>
-                <div [class.pass]="forgotPasswordRules.uppercase">{{ forgotPasswordRules.uppercase ? '✅' : '❌' }}
-                  Uppercase (A-Z)</div>
-                <div [class.pass]="forgotPasswordRules.lowercase">{{ forgotPasswordRules.lowercase ? '✅' : '❌' }}
-                  Lowercase (a-z)</div>
-                <div [class.pass]="forgotPasswordRules.number">{{ forgotPasswordRules.number ? '✅' : '❌' }} Number (0-9)
-                </div>
-                <div [class.pass]="forgotPasswordRules.special">{{ forgotPasswordRules.special ? '✅' : '❌' }} Special
-                  (!@#$%^&*)</div>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>Confirm Password</label>
-              <div class="input-shell">
-                <span class="input-icon">🔒</span>
-                <input type="password" placeholder="Confirm new password" [(ngModel)]="forgotConfirmPassword"
-                  [class.is-invalid]="forgotConfirmPassword && forgotNewPassword !== forgotConfirmPassword"
-                  [class.is-valid]="forgotConfirmPassword && forgotNewPassword === forgotConfirmPassword" />
-                <span class="valid-icon"
-                  *ngIf="forgotConfirmPassword && forgotNewPassword === forgotConfirmPassword">✓</span>
-                <span class="invalid-icon"
-                  *ngIf="forgotConfirmPassword && forgotNewPassword !== forgotConfirmPassword">✗</span>
-              </div>
-              <small class="error" *ngIf="forgotConfirmPassword && forgotNewPassword !== forgotConfirmPassword">
-                Passwords do not match.
-              </small>
-              <small class="success-msg" *ngIf="forgotConfirmPassword && forgotNewPassword === forgotConfirmPassword">
-                ✓ Passwords match!
-              </small>
-            </div>
-
-            <button type="button" class="auth-submit-btn" (click)="forgotResetPassword()"
-              [disabled]="forgotResetting || forgotPassedRules < 5 || forgotNewPassword !== forgotConfirmPassword">
-              {{ forgotResetting ? '⏳ Resetting...' : 'Reset Password →' }}
+              {{ forgotResetting ? 'Resetting...' : 'Reset Password' }}
             </button>
           </div>
 
-          <!-- STEP 4 — Success -->
-          <div *ngIf="forgotStep === 'success'" class="forgot-success">
-            <div class="success-check-lg">✓</div>
-            <h3>Password Reset Successful!</h3>
-            <p>Your password has been updated. Redirecting to login...</p>
+          <!-- STEP 4 -->
+          <div *ngIf="forgotStep === 'success'" class="success-box">
+            <h3>✅ Password Reset!</h3>
+            <p>Redirecting to login...</p>
           </div>
-
-        </div>
-
-        <!-- ============================== -->
-        <!-- REGISTER FORM                   -->
-        <!-- ============================== -->
-        <div class="form-container" *ngIf="activeTab === 'register' && !forgotMode">
-
-          <div class="form-heading">
-            <h3>Create Command Access</h3>
-            <p>Register and initialize your fleet control profile.</p>
-          </div>
-
-          <div class="alert-success" *ngIf="registerSuccess">✅ {{ registerSuccess }}</div>
-          <div class="alert-error" *ngIf="registerError">⚠️ {{ registerError }}</div>
-
-          <form [formGroup]="registerForm" (ngSubmit)="handleRegister()" novalidate>
-
-            <div class="reg-grid">
-
-              <div class="field">
-                <label>Username</label>
-                <div class="input-shell">
-                  <span class="input-icon">👤</span>
-                  <input type="text" placeholder="Enter username" formControlName="username" (blur)="checkUsername()"
-                    [class.is-invalid]="isRegisterInvalid('username') || usernameExists"
-                    [class.is-valid]="usernameVerified" />
-                  <span class="status-icon" *ngIf="usernameChecking">⏳</span>
-                  <span class="valid-icon" *ngIf="usernameVerified">✓</span>
-                  <span class="invalid-icon" *ngIf="usernameExists">✗</span>
-                </div>
-                <small class="error"
-                  *ngIf="isRegisterInvalid('username') && registerForm.get('username')?.hasError('required')">Username
-                  is required.</small>
-                <small class="error" *ngIf="usernameExists">Username is already taken.</small>
-                <small class="success-msg" *ngIf="usernameVerified">✓ Available!</small>
-              </div>
-
-              <div class="field">
-                <label>Email</label>
-                <div class="input-shell">
-                  <span class="input-icon">✉</span>
-                  <input type="email" placeholder="name@company.com" formControlName="email" (blur)="checkEmail()"
-                    [class.is-invalid]="isRegisterInvalid('email') || emailExists" [class.is-valid]="otpVerified"
-                    [readonly]="otpVerified" />
-                  <span class="status-icon" *ngIf="emailChecking">⏳</span>
-                  <span class="valid-icon" *ngIf="otpVerified">✓</span>
-                  <span class="invalid-icon" *ngIf="emailExists">✗</span>
-                </div>
-                <small class="error"
-                  *ngIf="isRegisterInvalid('email') && registerForm.get('email')?.hasError('required')">Email is
-                  required.</small>
-                <small class="error"
-                  *ngIf="isRegisterInvalid('email') && registerForm.get('email')?.hasError('email')">Enter a valid
-                  email.</small>
-                <small class="error" *ngIf="emailExists">Email already registered.</small>
-                <small class="success-msg" *ngIf="otpVerified">✓ Email verified!</small>
-
-                <div class="otp-section" *ngIf="emailAvailable && !otpVerified">
-                  <button type="button" class="otp-send-btn" (click)="sendOtp()"
-                    [disabled]="otpSending || (otpSent && otpTimer > 0)" *ngIf="!otpSent || otpTimer === 0">
-                    {{ otpSending ? '⏳ Sending...' : '📧 Send OTP' }}
-                  </button>
-                  <small class="otp-sent-msg" *ngIf="otpSentMessage && !otpVerified">✅ {{ otpSentMessage }}</small>
-                  <div class="otp-row" *ngIf="otpSent">
-                    <input type="text" class="otp-input" placeholder="6-digit OTP" maxlength="6" [(ngModel)]="otpCode"
-                      [ngModelOptions]="{standalone: true}" />
-                    <button type="button" class="otp-verify-btn" (click)="verifyOtp()"
-                      [disabled]="otpVerifying || otpCode.length !== 6">
-                      {{ otpVerifying ? '⏳' : '✓ Verify' }}
-                    </button>
-                  </div>
-                  <div class="otp-actions" *ngIf="otpSent && !otpVerified">
-                    <small class="otp-timer-text" *ngIf="otpTimer > 0">Resend in {{ otpTimer }}s</small>
-                    <button type="button" class="otp-resend" (click)="resendOtp()" *ngIf="otpTimer === 0">🔄
-                      Resend</button>
-                  </div>
-                  <small class="error" *ngIf="otpError">{{ otpError }}</small>
-                </div>
-              </div>
-
-              <div class="field">
-                <label>Password</label>
-                <div class="input-shell">
-                  <span class="input-icon">🔒</span>
-                  <input type="password" placeholder="Create secure password" formControlName="password"
-                    (input)="checkPasswordRules()" [class.is-invalid]="isRegisterInvalid('password')"
-                    [class.is-valid]="registerForm.get('password')?.valid && registerForm.get('password')?.touched" />
-                  <span class="valid-icon"
-                    *ngIf="registerForm.get('password')?.valid && registerForm.get('password')?.touched">✓</span>
-                </div>
-
-                <div class="strength-bar" *ngIf="passwordTouched">
-                  <div class="str-seg" [class.s1]="passedRules >= 1" [class.s2]="passedRules >= 2"
-                    [class.s3]="passedRules >= 3" [class.s4]="passedRules >= 4" [class.s5]="passedRules >= 5"></div>
-                  <div class="str-seg" [class.s2]="passedRules >= 2" [class.s3]="passedRules >= 3"
-                    [class.s4]="passedRules >= 4" [class.s5]="passedRules >= 5"></div>
-                  <div class="str-seg" [class.s3]="passedRules >= 3" [class.s4]="passedRules >= 4"
-                    [class.s5]="passedRules >= 5"></div>
-                  <div class="str-seg" [class.s4]="passedRules >= 4" [class.s5]="passedRules >= 5"></div>
-                  <div class="str-seg" [class.s5]="passedRules >= 5"></div>
-                  <small>
-                    <span *ngIf="passedRules <= 1">Weak</span>
-                    <span *ngIf="passedRules === 2">Fair</span>
-                    <span *ngIf="passedRules === 3">Good</span>
-                    <span *ngIf="passedRules === 4">Strong</span>
-                    <span *ngIf="passedRules === 5">Excellent ✓</span>
-                  </small>
-                </div>
-
-                <div class="pwd-rules" *ngIf="passwordTouched">
-                  <div [class.pass]="passwordRules.minLength">{{ passwordRules.minLength ? '✅' : '❌' }} Min 8 chars
-                  </div>
-                  <div [class.pass]="passwordRules.uppercase">{{ passwordRules.uppercase ? '✅' : '❌' }} Uppercase (A-Z)
-                  </div>
-                  <div [class.pass]="passwordRules.lowercase">{{ passwordRules.lowercase ? '✅' : '❌' }} Lowercase (a-z)
-                  </div>
-                  <div [class.pass]="passwordRules.number">{{ passwordRules.number ? '✅' : '❌' }} Number (0-9)</div>
-                  <div [class.pass]="passwordRules.special">{{ passwordRules.special ? '✅' : '❌' }} Special (!@#$%^&*)
-                  </div>
-                </div>
-
-                <small class="error"
-                  *ngIf="isRegisterInvalid('password') && registerForm.get('password')?.hasError('required')">Password
-                  is required.</small>
-              </div>
-
-              <div class="field">
-                <label>Contact Number</label>
-                <div class="input-shell">
-                  <span class="input-icon">📱</span>
-                  <input type="text" maxlength="10" placeholder="10 digit number" formControlName="contactNumber"
-                    (blur)="checkPhone()" [class.is-invalid]="isRegisterInvalid('contactNumber') || phoneExists"
-                    [class.is-valid]="phoneVerified" />
-                  <span class="status-icon" *ngIf="phoneChecking">⏳</span>
-                  <span class="valid-icon" *ngIf="phoneVerified">✓</span>
-                  <span class="invalid-icon" *ngIf="phoneExists">✗</span>
-                </div>
-                <small class="error"
-                  *ngIf="isRegisterInvalid('contactNumber') && registerForm.get('contactNumber')?.hasError('pattern')">Must
-                  be exactly 10 digits.</small>
-                <small class="error" *ngIf="phoneExists">Already registered.</small>
-                <small class="success-msg" *ngIf="phoneVerified">✓ Available!</small>
-              </div>
-
-              <div class="field full-w">
-                <label>Access Role</label>
-                <div class="input-shell">
-                  <span class="input-icon">🛡️</span>
-                  <select formControlName="role" [class.is-invalid]="isRegisterInvalid('role')">
-                    <option value="">Select role</option>
-                    <option value="ADMIN">ADMIN</option>
-                    <option value="FLEET_MANAGER">FLEET MANAGER</option>
-                    <option value="DRIVER">DRIVER</option>
-                    <option value="MECHANIC">MECHANIC</option>
-                  </select>
-                </div>
-                <small class="error"
-                  *ngIf="isRegisterInvalid('role') && registerForm.get('role')?.hasError('required')">Role is
-                  required.</small>
-              </div>
-
-            </div>
-
-            <button type="submit" class="auth-submit-btn" [disabled]="registerLoading"
-              [class.btn-disabled]="!otpVerified">
-              {{ registerLoading ? '⏳ Creating Profile...' : 'Launch Fleet Dashboard →' }}
-            </button>
-
-          </form>
 
         </div>
 
       </div>
+
     </section>
 
   </div>

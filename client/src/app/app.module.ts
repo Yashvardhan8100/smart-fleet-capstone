@@ -16,6 +16,7 @@ import { InsuranceComponent } from './component/insurance/insurance.component';
 
 import { HttpService } from '../services/http.service';
 import { AuthService } from '../services/auth.service';
+import { LandingComponent } from './component/landing/landing.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { AuthService } from '../services/auth.service';
     VehicleComponent,
     DriverComponent,
     MaintenanceComponent,
-    InsuranceComponent
+    InsuranceComponent,
+    LandingComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,9 @@
-<!-- Show premium app shell only after login -->
+<!-- ✅ SHOW DASHBOARD SHELL ONLY FOR LOGGED-IN USERS -->
 <ng-container *ngIf="authService.isLoggedIn(); else publicLayout">
+
   <div class="app-shell">
+
+    <!-- ✅ SIDEBAR -->
     <aside class="sidebar">
       <div class="brand-box">
         <div class="brand-icon">🚚</div>
@@ -11,63 +14,75 @@
       </div>
 
       <nav class="nav-menu">
-        <!-- Dashboard → All roles -->
+
         <a routerLink="/dashboard" routerLinkActive="active">
           <span>📊</span> Dashboard
         </a>
 
-        <!-- Vehicles → ADMIN + FLEET_MANAGER -->
-        <a routerLink="/vehicles" routerLinkActive="active" *ngIf="role === 'ADMIN' || role === 'FLEET_MANAGER'">
+        <a routerLink="/vehicles" routerLinkActive="active"
+           *ngIf="role === 'ADMIN' || role === 'FLEET_MANAGER'">
           <span>🚚</span> Vehicles
         </a>
 
-        <!-- Drivers → ADMIN + FLEET_MANAGER -->
-        <a routerLink="/drivers" routerLinkActive="active" *ngIf="role === 'ADMIN' || role === 'FLEET_MANAGER'">
+        <a routerLink="/drivers" routerLinkActive="active"
+           *ngIf="role === 'ADMIN' || role === 'FLEET_MANAGER'">
           <span>👤</span> Drivers
         </a>
 
-        <!-- Maintenance → ADMIN + MECHANIC -->
-        <a routerLink="/maintenance" routerLinkActive="active" *ngIf="role === 'ADMIN' || role === 'MECHANIC'">
+        <a routerLink="/maintenance" routerLinkActive="active"
+           *ngIf="role === 'ADMIN' || role === 'MECHANIC'">
           <span>⚙️</span> Maintenance
         </a>
 
-        <!-- Insurance → ADMIN only -->
-        <a routerLink="/insurance" routerLinkActive="active" *ngIf="role === 'ADMIN'">
+        <a routerLink="/insurance" routerLinkActive="active"
+           *ngIf="role === 'ADMIN'">
           <span>🛡️</span> Insurance
         </a>
+
       </nav>
 
       <div class="sidebar-footer">
         <div class="system-status">
           <span class="live-dot"></span> Live Tracking ON
         </div>
-        <button type="button" class="logout-btn" (click)="logout()">
+
+        <button class="logout-btn" (click)="logout()">
           Logout
         </button>
       </div>
     </aside>
 
+    <!-- ✅ MAIN CONTENT -->
     <main class="main-content">
+
       <header class="topbar">
         <div>
           <h1>{{ title }}</h1>
           <p>Enterprise Fleet Command Center</p>
         </div>
+
         <div class="topbar-metrics">
-          <span><i></i> 2,847 active</span>
+          <span>🚚 2,847 active</span>
           <span>99.98% uptime</span>
-          <span>JWT secured</span>
+          <span>🔐 JWT secured</span>
         </div>
       </header>
 
       <section class="page-content">
         <router-outlet></router-outlet>
       </section>
+
     </main>
+
   </div>
+
 </ng-container>
 
-<!-- Public layout for login/register -->
+
+<!-- ✅ PUBLIC PAGES (Landing + Login + Register) -->
 <ng-template #publicLayout>
+
+  <!-- ✅ NO SIDEBAR HERE -->
   <router-outlet></router-outlet>
+
 </ng-template>

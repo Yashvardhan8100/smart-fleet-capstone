@@ -34,8 +34,8 @@ public class Insurance {
      @NotBlank
      private String coverageType;
 
-     @OneToOne(fetch = FetchType.EAGER)
-     @JoinColumn(name = "vehicle_id", nullable = false)
+     @OneToOne
+     @JoinColumn(name = "vehicle_id", unique = true)
      private Vehicle vehicle;
 
      public Insurance() {

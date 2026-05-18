@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 
 import com.edutech.dto.DriverDTO;
 import com.edutech.entity.Driver;
+import com.edutech.entity.Vehicle;
 import com.edutech.exception.DuplicateResourceException;
 import com.edutech.exception.ResourceNotFoundException;
 import com.edutech.repository.DriverRepository;
+import com.edutech.repository.VehicleRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,131 +17,156 @@ import java.util.stream.Collectors;
 @Service
 public class DriverService {
 
-     // Add the required code here!
-     @Autowired
-     private DriverRepository driverRepository;
+    @Autowired
+    private DriverRepository driverRepository;
 
-     // Convert Entity → DTO
-     private DriverDTO mapToDTO(Driver d) {
-          DriverDTO dto = new DriverDTO();
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
-          dto.setDriverId(d.getDriverId());
-          dto.setDriverName(d.getDriverName());
-          dto.setLicenseNumber(d.getLicenseNumber());
-          dto.setPhoneNumber(d.getPhoneNumber());
-          dto.setExperienceYears(d.getExperienceYears());
-          dto.setAddress(d.getAddress());
-          dto.setAvailabilityStatus(d.getAvailabilityStatus());
+    // ✅ ENTITY → DTO
+    private DriverDTO mapToDTO(Driver d) {
+        DriverDTO dto = new DriverDTO();
 
-          return dto;
-     }
+        dto.setDriverId(d.getDriverId());
+        dto.setDriverName(d.getDriverName());
+        dto.setLicenseNumber(d.getLicenseNumber());
+        dto.setPhoneNumber(d.getPhoneNumber());
+        dto.setExperienceYears(d.getExperienceYears());
+        dto.setAddress(d.getAddress());
+        dto.setAvailabilityStatus(d.getAvailabilityStatus());
 
-     // POST /api/drivers
-     public DriverDTO addDriver(Driver driver) {
+        return dto;
+    }
 
-          // Use your custom exists query
-          if (driverRepository.existsByLicenseNumber(driver.getLicenseNumber())) {
-               throw new DuplicateResourceException("licenseNumber already exists");
-          }
+    // ✅ ADD DRIVER
+    public DriverDTO addDriver(Driver driver) {
 
-          return mapToDTO(driverRepository.save(driver));
-     }
+        if (driverRepository.existsByLicenseNumber(driver.getLicenseNumber())) {
+            throw new DuplicateResourceException("licenseNumber already exists");
+        }
 
-     // GET /api/drivers
-     public List<DriverDTO> getAllDrivers() {
-          return driverRepository.findAll()
-                    .stream()
-                    .map(this::mapToDTO)
-                    .collect(Collectors.toList());
-     }
+        return mapToDTO(driverRepository.save(driver));
+    }
 
-     // GET /api/drivers/{id}
-     public DriverDTO getDriverById(Long id) {
-          Driver driver = driverRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
+    // ✅ GET ALL
+    public List<DriverDTO> getAllDrivers() {
+        return driverRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
-          return mapToDTO(driver);
-     }
+    // ✅ GET BY ID
+    public DriverDTO getDriverById(Long id) {
+        Driver driver = driverRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-     // PUT /api/drivers/{id}
-     public DriverDTO updateDriver(Long id, Driver updated) {
+        return mapToDTO(driver);
+    }
 
-          Driver existing = driverRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
+    // ✅ ✅ ✅ UPDATE DRIVER (FINAL FIXED VERSION)
+    public DriverDTO updateDriver(Long id, Driver updated) {
 
-          // Check duplicate license if changed
-          if (!existing.getLicenseNumber().equals(updated.getLicenseNumber())) {
-               if (driverRepository.existsByLicenseNumber(updated.getLicenseNumber())) {
-                    throw new DuplicateResourceException("licenseNumber already exists");
-               }
-          }
+        Driver existing = driverRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-          existing.setDriverName(updated.getDriverName());
-          existing.setLicenseNumber(updated.getLicenseNumber());
-          existing.setPhoneNumber(updated.getPhoneNumber());
-          existing.setExperienceYears(updated.getExperienceYears());
-          existing.setAddress(updated.getAddress());
-          existing.setAvailabilityStatus(updated.getAvailabilityStatus());
+        // ✅ duplicate check
+        if (!existing.getLicenseNumber().equals(updated.getLicenseNumber())) {
+            if (driverRepository.existsByLicenseNumber(updated.getLicenseNumber())) {
+                throw new DuplicateResourceException("licenseNumber already exists");
+            }
+        }
 
-          return mapToDTO(driverRepository.save(existing));
-     }
+        // ✅ update fields
+        existing.setDriverName(updated.getDriverName());
+        existing.setLicenseNumber(updated.getLicenseNumber());
+        existing.setPhoneNumber(updated.getPhoneNumber());
+        existing.setExperienceYears(updated.getExperienceYears());
+        existing.setAddress(updated.getAddress());
 
-     // DELETE /api/drivers/{id}
-     public void deleteDriver(Long id) {
+        String newStatus = updated.getAvailabilityStatus();
+        existing.setAvailabilityStatus(newStatus);
 
-          Driver d = driverRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
+        // ✅ ✅ ✅ CRITICAL LOGIC: AUTO-UNASSIGN FROM VEHICLE
+        if ("Available".equalsIgnoreCase(newStatus)) {
 
-          driverRepository.delete(d);
-     }
+            List<Vehicle> vehicles = vehicleRepository.findByDriverDriverId(id);
 
-     // GET /api/drivers/search?name=
-     public List<DriverDTO> searchByName(String name) {
+            for (Vehicle v : vehicles) {
+                v.setDriver(null); // ✅ remove driver
+            }
 
-          // Uses your custom JPQL query
-          return driverRepository.findByNameIgnoreCase(name)
-                    .stream()
-                    .map(this::mapToDTO)
-                    .collect(Collectors.toList());
-     }
+            vehicleRepository.saveAll(vehicles);
+        }
 
-     // GET /api/drivers/filter/availability?status=
-     public List<DriverDTO> filterByAvailability(String status) {
+        return mapToDTO(driverRepository.save(existing));
+    }
 
-          return driverRepository.findByAvailabilityStatus(status)
-                    .stream()
-                    .map(this::mapToDTO)
-                    .collect(Collectors.toList());
-     }
+    // ✅ DELETE DRIVER
+    public void deleteDriver(Long id) {
 
-     // GET /api/drivers/sort/experience?order=asc|desc
-     public List<DriverDTO> sortByExperience(String order) {
+        Driver d = driverRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-          List<Driver> list;
+        driverRepository.delete(d);
+    }
 
-          if ("desc".equalsIgnoreCase(order)) {
-               list = driverRepository.findAllSortedByExperienceDesc();
-          } else {
-               list = driverRepository.findAllSortedByExperienceAsc();
-          }
+    // ✅ SEARCH BY NAME
+    public List<DriverDTO> searchByName(String name) {
+        return driverRepository.findByNameIgnoreCase(name)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
-          return list.stream()
-                    .map(this::mapToDTO)
-                    .collect(Collectors.toList());
-     }
+    // ✅ FILTER BY AVAILABILITY
+    public List<DriverDTO> filterByAvailability(String status) {
+        return driverRepository.findByAvailabilityStatus(status)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
-     // ✅ NEW — Update driver status by name (for DRIVER role)
-     public DriverDTO updateStatusByName(String driverName, String status) {
+    // ✅ SORT BY EXPERIENCE
+    public List<DriverDTO> sortByExperience(String order) {
 
-          List<Driver> drivers = driverRepository.findByNameIgnoreCase(driverName);
+        List<Driver> list;
 
-          if (drivers.isEmpty()) {
-               throw new ResourceNotFoundException("Driver not found");
-          }
+        if ("desc".equalsIgnoreCase(order)) {
+            list = driverRepository.findAllSortedByExperienceDesc();
+        } else {
+            list = driverRepository.findAllSortedByExperienceAsc();
+        }
 
-          Driver driver = drivers.get(0);
-          driver.setAvailabilityStatus(status);
+        return list.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
-          return mapToDTO(driverRepository.save(driver));
-     }
+    // ✅ ✅ ✅ UPDATE DRIVER STATUS BY NAME (ALSO FIXED)
+    public DriverDTO updateStatusByName(String driverName, String status) {
+
+        List<Driver> drivers = driverRepository.findByNameIgnoreCase(driverName);
+
+        if (drivers.isEmpty()) {
+            throw new ResourceNotFoundException("Driver not found");
+        }
+
+        Driver driver = drivers.get(0);
+        driver.setAvailabilityStatus(status);
+
+        // ✅ SAME AUTO-UNASSIGN LOGIC
+        if ("Available".equalsIgnoreCase(status)) {
+
+            List<Vehicle> vehicles = vehicleRepository.findByDriverDriverId(driver.getDriverId());
+
+            for (Vehicle v : vehicles) {
+                v.setDriver(null);
+            }
+
+            vehicleRepository.saveAll(vehicles);
+        }
+
+        return mapToDTO(driverRepository.save(driver));
+    }
 }

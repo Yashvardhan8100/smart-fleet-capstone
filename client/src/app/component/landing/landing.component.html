@@ -1,0 +1,277 @@
+<div class="landing">
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar">
+    <div class="nav-brand" (click)="scrollTo('hero')">
+      🚢 <span>SmartFleet Pro</span>
+    </div>
+
+    <div class="nav-links" [class.open]="mobileMenuOpen">
+      <a (click)="scrollTo('hero')">Home</a>
+      <a (click)="scrollTo('about')">About Us</a>
+      <a (click)="scrollTo('features')">Features</a>
+      <a (click)="scrollTo('contact')">Contact Us</a>
+      <a class="nav-login-link" (click)="goLogin()">Login</a>
+    </div>
+
+    <button class="hamburger" (click)="toggleMenu()">☰</button>
+  </nav>
+
+
+  <!-- ================= HERO ================= -->
+  <section id="hero" class="hero">
+
+    <!-- ✅ VIDEO BACKGROUND -->
+    
+<video
+  #heroVideo
+  class="hero-video"
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="auto"
+>
+  <source src="assets/videos/fleet-bg.mp4" type="video/mp4" />
+</video>
+
+
+    <!-- FILM GRAIN -->
+    <div class="film-grain"></div>
+
+    <!-- DARK OVERLAY -->
+    <div class="hero-overlay"></div>
+
+    <!-- CONTENT -->
+    <div class="hero-inner fade-in">
+
+      <p class="hero-badge">
+        Enterprise Fleet & Cargo Intelligence Platform
+      </p>
+
+      <h1 class="hero-title">
+        SmartFleet — Intelligent Cargo,
+        <span class="gradient-text">Redefined.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Real-time fleet tracking, predictive maintenance, cargo analytics,
+        and role-based operations control — built for modern logistics teams.
+      </p>
+
+      <button class="btn-cta" (click)="goRegister()">
+        <span class="btn-text">Get Started →</span>
+        <span class="btn-glow"></span>
+      </button>
+
+      <p class="hero-secondary">
+        Already have an account?
+        <a (click)="goLogin()">Login</a>
+      </p>
+
+      <!-- STATS -->
+      <div class="stats-row">
+
+        <div class="stat-card">
+          <div class="stat-val">{{ vehiclesActive | number }}</div>
+          <div class="stat-label">Vehicles Active</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-val">{{ fleetsManaged | number }}</div>
+          <div class="stat-label">Fleets Managed</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-val">{{ uptimeVal }}.98%</div>
+          <div class="stat-label">Platform Uptime</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-val">{{ driversOnline | number }}</div>
+          <div class="stat-label">Drivers Online</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SCROLL ICON -->
+    <div class="scroll-chevron" (click)="scrollTo('about')">
+      <span>⌄</span>
+    </div>
+
+  </section>
+
+
+  <!-- ================= ABOUT ================= -->
+  <section id="about" class="section">
+
+    <h2 class="section-title">About Us</h2>
+
+    <p class="section-sub">
+      SmartFleet Pro empowers logistics teams with full operational command — 
+      from vehicle tracking to cargo insurance compliance.
+    </p>
+
+    <div class="card-row">
+
+      <div class="glass-card">
+        <div class="card-icon">📡</div>
+        <h3>Real-time Tracking</h3>
+        <p>Live GPS tracking with alerts and route monitoring.</p>
+      </div>
+
+      <div class="glass-card">
+        <div class="card-icon">⚙️</div>
+        <h3>Smart Maintenance</h3>
+        <p>Predictive service scheduling for fleet assets.</p>
+      </div>
+
+      <div class="glass-card">
+        <div class="card-icon">📊</div>
+        <h3>Fleet Analytics</h3>
+        <p>Dashboards with insights and performance metrics.</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ================= FEATURES ================= -->
+  <section id="features" class="section section-alt">
+
+    <h2 class="section-title">Features</h2>
+
+    <p class="section-sub">
+      Everything you need to manage enterprise fleets.
+    </p>
+
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="f-icon">🚢</div>
+        <h3>GPS Tracking</h3>
+        <p>Track vehicles and cargo in real-time.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="f-icon">🛠️</div>
+        <h3>Maintenance</h3>
+        <p>Service schedules and repair workflows.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="f-icon">📈</div>
+        <h3>Analytics</h3>
+        <p>Operational KPIs and cost analysis.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="f-icon">🛡️</div>
+        <h3>Insurance</h3>
+        <p>Policy management and alerts.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="f-icon">👤</div>
+        <h3>Driver Management</h3>
+        <p>Driver records and monitoring.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="f-icon">🔒</div>
+        <h3>Security</h3>
+        <p>JWT authentication and secure APIs.</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ================= CONTACT ================= -->
+  <section id="contact" class="section">
+
+    <h2 class="section-title">Contact Us</h2>
+
+    <p class="section-sub">We’d love to hear from you.</p>
+
+    <div class="contact-layout">
+
+      <form class="contact-form glass-card"
+            [formGroup]="contactForm"
+            (ngSubmit)="sendContact()">
+
+        <input placeholder="Your Name"
+               formControlName="name"
+               [class.input-error]="isInvalid('name')" />
+
+        <input placeholder="Email Address"
+               formControlName="email"
+               [class.input-error]="isInvalid('email')" />
+
+        <textarea rows="4"
+                  placeholder="Your Message"
+                  formControlName="message"
+                  [class.input-error]="isInvalid('message')">
+        </textarea>
+
+        <button type="submit" class="btn-cta">
+          <span class="btn-text">Send Message</span>
+          <span class="btn-glow"></span>
+        </button>
+
+        <p class="sent-msg" *ngIf="contactSent">
+          ✅ Message sent successfully!
+        </p>
+
+      </form>
+
+      <div class="contact-info">
+
+        <div class="glass-card info-card">
+          <span>📍</span>
+          <div>
+            <strong>Office</strong><br>
+            Mumbai, India
+          </div>
+        </div>
+
+        <div class="glass-card info-card">
+          <span>📧</span>
+          <div>
+            <strong>Email</strong><br>
+            support@smartfleetpro.com
+          </div>
+        </div>
+
+        <div class="glass-card info-card">
+          <span>📞</span>
+          <div>
+            <strong>Phone</strong><br>
+            +91 90000 00000
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+
+    <div class="footer-brand">🚢 SmartFleet Pro</div>
+
+    <div class="footer-links">
+      <a (click)="scrollTo('hero')">Home</a>
+      <a (click)="scrollTo('about')">About</a>
+      <a (click)="scrollTo('features')">Features</a>
+      <a (click)="scrollTo('contact')">Contact</a>
+    </div>
+
+    <p>© 2026 SmartFleet Pro. All rights reserved.</p>
+
+  </footer>
+
+</div>

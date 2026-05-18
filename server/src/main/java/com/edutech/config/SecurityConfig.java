@@ -71,7 +71,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                                 "/api/auth/check-phone",
                                                 "/api/auth/send-otp",
                                                 "/api/auth/verify-otp",
-                                                "/api/auth/forgot-password/**")
+                                                "/api/auth/forgot-password/**",
+                                                "/api/contact"
+                                        )
                                 .permitAll()
 
                                 // ✅ NEW — DRIVER can update own status

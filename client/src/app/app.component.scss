@@ -1,267 +1,232 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap');
+/* ========================================= */
+/* ROOT LAYOUT                               */
+/* ========================================= */
 
 :host {
   display: block;
-  min-height: 100vh;
-  font-family: 'Outfit', sans-serif;
+  height: 100vh;
   background: #050914;
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-}
+/* ========================================= */
+/* APP SHELL                                 */
+/* ========================================= */
 
 .app-shell {
-  min-height: 100vh;
   display: flex;
-  background:
-    radial-gradient(circle at top left, rgba(18, 113, 255, 0.13), transparent 34%),
-    radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.10), transparent 30%),
-    linear-gradient(135deg, #050914 0%, #0b1220 48%, #111827 100%);
-  color: #ffffff;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* Sidebar */
+/* ========================================= */
+/* SIDEBAR                                   */
+/* ========================================= */
+
 .sidebar {
-  width: 280px;
-  min-height: 100vh;
-  padding: 24px 20px;
-  background: rgba(3, 7, 18, 0.86);
-  border-right: 1px solid rgba(148, 163, 184, 0.18);
-  backdrop-filter: blur(18px);
+  width: 260px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 0;
+  padding: 20px;
+  transition: all 0.3s ease;
 }
 
+/* BRAND */
 .brand-box {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.14), rgba(245, 158, 11, 0.08));
-  border: 1px solid rgba(125, 211, 252, 0.16);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
+  gap: 12px;
+  margin-bottom: 30px;
 }
 
 .brand-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 15px;
-  display: grid;
-  place-items: center;
-  font-size: 25px;
-  background: linear-gradient(135deg, #0ea5e9, #2563eb);
-  box-shadow: 0 0 28px rgba(14, 165, 233, 0.35);
+  font-size: 32px;
 }
 
 .brand-box h2 {
+  font-size: 20px;
   margin: 0;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: 0.4px;
 }
 
 .brand-box p {
-  margin: 2px 0 0;
   font-size: 12px;
-  color: #93c5fd;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  color: #94a3b8;
 }
 
-/* Navigation */
+/* ========================================= */
+/* NAV MENU                                  */
+/* ========================================= */
+
 .nav-menu {
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  flex: 1;
 }
 
 .nav-menu a {
-  text-decoration: none;
-  color: #cbd5e1;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 13px 14px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 700;
-  transition: 0.25s ease;
-  border: 1px solid transparent;
+  gap: 10px;
+
+  padding: 12px;
+  margin-bottom: 10px;
+
+  border-radius: 10px;
+  color: #e2e8f0;
+  text-decoration: none;
+
+  transition: all 0.3s ease;
 }
 
-.nav-menu a span {
-  font-size: 18px;
+/* Hover */
+.nav-menu a:hover {
+  background: rgba(56, 189, 248, 0.1);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+  transform: translateX(5px);
 }
 
-.nav-menu a:hover,
+/* Active */
 .nav-menu a.active {
-  color: #ffffff;
-  background: rgba(14, 165, 233, 0.14);
-  border-color: rgba(14, 165, 233, 0.25);
-  box-shadow: inset 0 0 18px rgba(14, 165, 233, 0.06);
-  transform: translateX(4px);
+  background: linear-gradient(90deg, #38bdf8, #f59e0b);
+  color: #050914;
+  font-weight: 600;
 }
 
-/* Footer */
+/* ========================================= */
+/* SIDEBAR FOOTER                            */
+/* ========================================= */
+
 .sidebar-footer {
   margin-top: auto;
 }
 
 .system-status {
-  display: flex;
-  align-items: center;
-  gap: 9px;
   font-size: 13px;
-  color: #bbf7d0;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: rgba(34, 197, 94, 0.10);
-  border: 1px solid rgba(34, 197, 94, 0.20);
-  margin-bottom: 14px;
+  color: #94a3b8;
+  margin-bottom: 10px;
 }
 
+/* Live dot */
 .live-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
+  width: 8px;
+  height: 8px;
   background: #22c55e;
-  box-shadow: 0 0 14px #22c55e;
-  animation: blinkLive 1.2s infinite;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
 }
 
+/* Logout Button */
 .logout-btn {
   width: 100%;
-  height: 44px;
+  padding: 10px;
+
+  border-radius: 8px;
   border: none;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
-  color: #111827;
-  font-weight: 900;
+
+  background: linear-gradient(90deg, #ef4444, #b91c1c);
+  color: white;
   cursor: pointer;
-  transition: 0.25s ease;
+
+  transition: all 0.3s ease;
 }
 
 .logout-btn:hover {
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
   transform: translateY(-2px);
-  box-shadow: 0 16px 28px rgba(239, 68, 68, 0.24);
 }
 
-/* Main */
+/* ========================================= */
+/* MAIN CONTENT                              */
+/* ========================================= */
+
 .main-content {
   flex: 1;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
+/* ========================================= */
+/* TOPBAR                                    */
+/* ========================================= */
+
 .topbar {
-  min-height: 86px;
-  padding: 20px 30px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
-  background: rgba(15, 23, 42, 0.72);
-  backdrop-filter: blur(16px);
+  padding: 20px;
+
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  align-items: center;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,0.03);
 }
 
 .topbar h1 {
+  font-size: 22px;
   margin: 0;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
 }
 
 .topbar p {
-  margin: 2px 0 0;
+  font-size: 12px;
   color: #94a3b8;
-  font-size: 13px;
-}
-
-.topbar-metrics {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
 }
 
 .topbar-metrics span {
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.72);
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  color: #dbeafe;
+  margin-left: 12px;
   font-size: 12px;
-  font-weight: 700;
+  color: #94a3b8;
 }
 
-.topbar-metrics i {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #22c55e;
-  margin-right: 6px;
-  box-shadow: 0 0 12px #22c55e;
-}
+/* ========================================= */
+/* PAGE CONTENT                              */
+/* ========================================= */
 
 .page-content {
-  padding: 0;
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
 
-/* Animations */
-@keyframes blinkLive {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.45;
-    transform: scale(1.35);
-  }
+/* Scrollbar */
+.page-content::-webkit-scrollbar {
+  width: 6px;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .app-shell {
-    flex-direction: column;
-  }
+.page-content::-webkit-scrollbar-thumb {
+  background: #38bdf8;
+  border-radius: 10px;
+}
+
+/* ========================================= */
+/* RESPONSIVE                                */
+/* ========================================= */
+
+@media (max-width: 768px) {
 
   .sidebar {
-    width: 100%;
-    min-height: auto;
-    position: relative;
+    width: 70px;
+    padding: 10px;
   }
 
-  .nav-menu {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+  .brand-box h2,
+  .brand-box p {
+    display: none;
   }
 
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
+  .nav-menu a {
+    justify-content: center;
+    font-size: 0;
   }
-}
 
-@media (max-width: 520px) {
-  .nav-menu {
-    grid-template-columns: 1fr;
+  .nav-menu a span {
+    font-size: 18px;
   }
 
   .topbar {
-    padding: 18px;
+    padding: 10px;
   }
 
-  .topbar h1 {
-    font-size: 25px;
-  }
 }

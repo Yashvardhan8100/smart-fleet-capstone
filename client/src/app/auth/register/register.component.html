@@ -1,379 +1,268 @@
-<div class="register-command-page">
+<div class="register-page">
 
-  <!-- Top Live Stats Strip -->
-  <div class="stats-strip">
-    <div class="marquee">
-      🟢 14,302 fleets managed · 3.2M vehicles tracked live · 99.97% uptime · SmartFleet Pro command network online ·
-      🟢 14,302 fleets managed · 3.2M vehicles tracked live · 99.97% uptime · SmartFleet Pro command network online ·
-    </div>
-  </div>
+  <!-- ✅ TOP LEFT CORNER (FIXED) -->
+  <a class="back-link" (click)="goHome()">← Back to Home</a>
 
-  <!-- Animated Background Layers -->
-  <div class="bg-layer"></div>
-  <div class="bg-overlay"></div>
-  <div class="noise-layer"></div>
-  <div class="hex-grid"></div>
+  <div class="register-layout">
 
-  <!-- Floating Vehicles -->
-  <div class="vehicle-bg vehicle-bg-1">🚚</div>
-  <div class="vehicle-bg vehicle-bg-2">🚛</div>
-  <div class="vehicle-bg vehicle-bg-3">🚐</div>
-  <div class="vehicle-bg vehicle-bg-4">🚗</div>
-  <div class="vehicle-bg vehicle-bg-5">🚚</div>
+    <!-- LEFT PANEL -->
+    <section class="left-panel">
 
-  <!-- Data Streams -->
-  <div class="data-streams">
-    <span>GPS 28.6139°N 77.2090°E</span>
-    <span>ROUTE SYNC 04A</span>
-    <span>FLEET NODE ACTIVE</span>
-    <span>ETA VECTOR LOCKED</span>
-    <span>COMMAND LINK SECURE</span>
-    <span>VEHICLE TELEMETRY ONLINE</span>
-  </div>
+      <div class="left-content">
+        <h1>Join <span class="grad">SmartFleet Pro</span></h1>
+        <p>
+          Create your fleet control profile and start managing
+          vehicles, drivers, and operations in real-time.
+        </p>
 
-  <!-- Route Lines -->
-  <svg class="world-routes" viewBox="0 0 1200 600" preserveAspectRatio="none">
-    <path d="M80 420 C250 280 390 360 520 250 C700 100 850 220 1080 130"></path>
-    <path d="M120 180 C310 260 420 170 620 310 C780 430 940 320 1120 450"></path>
-    <circle cx="520" cy="250" r="8"></circle>
-    <circle cx="850" cy="220" r="8"></circle>
-    <circle cx="1080" cy="130" r="8"></circle>
-  </svg>
-
-  <!-- Registration Card -->
-  <div class="register-card">
-
-    <div class="card-glow"></div>
-
-    <div class="card-vehicle card-vehicle-1">🚚</div>
-    <div class="card-vehicle card-vehicle-2">🚛</div>
-    <div class="card-vehicle card-vehicle-3">🚐</div>
-
-    <div class="card-road-line card-road-line-1"></div>
-    <div class="card-road-line card-road-line-2"></div>
-
-    <!-- Brand Header -->
-    <div class="brand-header">
-      <div class="logo-orb">🚚</div>
-      <div>
-        <h1>SmartFleet Pro</h1>
-        <p>Your Fleet. Fully Commanded.</p>
-      </div>
-    </div>
-
-    <!-- Access Status -->
-    <div class="access-status">
-      <div class="access-node active">
-        <span>1</span>
-      </div>
-      <div class="access-line"></div>
-      <div class="access-text">
-        <strong>Admin Access Registration</strong>
-        <small>Identity verification · Email OTP · Secure command profile</small>
-      </div>
-    </div>
-
-    <!-- Title -->
-    <div class="form-title">
-      <h2>Create Command Access</h2>
-      <p>Register as SmartFleet Pro user and initialize your fleet control profile.</p>
-    </div>
-
-    <!-- Messages -->
-    <div class="alert alert-success" *ngIf="successMessage">
-      ✅ {{ successMessage }}
-    </div>
-
-    <div class="alert alert-danger" *ngIf="errorMessage">
-      ⚠️ {{ errorMessage }}
-    </div>
-
-    <!-- Form -->
-    <form [formGroup]="registerForm" (ngSubmit)="register()" novalidate>
-
-      <div class="form-grid">
-
-        <!-- Username -->
-        <div class="form-group field-delay-1">
-          <label>Username</label>
-
-          <div class="input-shell">
-            <span class="input-icon">👤</span>
-
-            <input type="text" placeholder="Enter username" formControlName="username" (blur)="checkUsername()"
-              [class.is-invalid]="isInvalid('username') || usernameExists" [class.is-valid]="usernameVerified" />
-
-            <span class="input-status" *ngIf="usernameChecking">⏳</span>
-            <span class="valid-check" *ngIf="usernameVerified">✓</span>
-            <span class="invalid-check" *ngIf="usernameExists">✗</span>
+        <div class="left-features">
+          <div class="lf-item">
+            <span>📡</span>
+            <div>
+              <strong>Live Tracking</strong>
+              <small>Real-time GPS for every vehicle</small>
+            </div>
           </div>
+          <div class="lf-item">
+            <span>⚙️</span>
+            <div>
+              <strong>Smart Maintenance</strong>
+              <small>Predictive scheduling & alerts</small>
+            </div>
+          </div>
+          <div class="lf-item">
+            <span>🔒</span>
+            <div>
+              <strong>Secure Access</strong>
+              <small>JWT + role-based control</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-          <small class="error" *ngIf="isInvalid('username') && registerForm.get('username')?.hasError('required')">
-            Username is required.
-          </small>
+    <!-- RIGHT PANEL -->
+    <section class="right-panel">
 
-          <small class="error" *ngIf="usernameExists">
-            Username is already taken.
-          </small>
+      <div class="auth-card">
 
-          <small class="success-text" *ngIf="usernameVerified">
-            ✓ Username is available!
-          </small>
+        <!-- BRAND -->
+        <div class="brand">
+          <span class="brand-icon">🚚</span>
+          <div>
+            <h2>SmartFleet Pro</h2>
+            <small>Create Account</small>
+          </div>
         </div>
 
-        <!-- Email + OTP -->
-        <div class="form-group field-delay-2">
-          <label>Email Address</label>
+        <!-- ALERTS -->
+        <div class="alert-success" *ngIf="successMessage">✅ {{ successMessage }}</div>
+        <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-          <div class="input-shell">
-            <span class="input-icon">✉</span>
+        <!-- FORM -->
+        <form [formGroup]="registerForm" (ngSubmit)="register()">
 
-            <input type="email" placeholder="name@company.com" formControlName="email" (blur)="checkEmail()"
-              [class.is-invalid]="isInvalid('email') || emailExists" [class.is-valid]="otpVerified"
-              [readonly]="otpVerified" />
-
-            <span class="input-status" *ngIf="emailChecking">⏳</span>
-            <span class="valid-check" *ngIf="otpVerified">✓</span>
-            <span class="invalid-check" *ngIf="emailExists">✗</span>
+          <!-- USERNAME -->
+          <div class="field">
+            <label>Username</label>
+            <div class="input-wrap">
+              <input
+                placeholder="Enter username"
+                formControlName="username"
+                (blur)="checkUsername()"
+                [class.input-error]="isInvalid('username') || usernameExists"
+                [class.input-valid]="usernameVerified" />
+              <span class="status" *ngIf="usernameChecking">⏳</span>
+              <span class="status valid" *ngIf="usernameVerified">✓</span>
+              <span class="status invalid" *ngIf="usernameExists">✗</span>
+            </div>
+            <small class="err" *ngIf="isInvalid('username')">Username is required.</small>
+            <small class="err" *ngIf="usernameExists">Username is already taken.</small>
+            <small class="ok" *ngIf="usernameVerified">✓ Available!</small>
           </div>
 
-          <small class="error" *ngIf="isInvalid('email') && registerForm.get('email')?.hasError('required')">
-            Email is required.
-          </small>
-
-          <small class="error" *ngIf="isInvalid('email') && registerForm.get('email')?.hasError('email')">
-            Enter a valid email address.
-          </small>
-
-          <small class="error" *ngIf="emailExists">
-            Email is already registered.
-          </small>
-
-          <small class="success-text" *ngIf="otpVerified">
-            ✓ Email verified successfully!
-          </small>
-
-          <!-- OTP Section -->
-          <div class="otp-section" *ngIf="emailAvailable && !otpVerified">
-
-            <button type="button" class="otp-send-btn" (click)="sendOtp()"
-              [disabled]="otpSending || (otpSent && otpTimer > 0)" *ngIf="!otpSent || otpTimer === 0">
-              {{ otpSending ? '⏳ Sending...' : '📧 Send OTP' }}
-            </button>
-
-            <small class="otp-sent-text" *ngIf="otpSentMessage && !otpVerified">
-              ✅ {{ otpSentMessage }}
+          <!-- EMAIL -->
+          <div class="field">
+            <label>Email Address</label>
+            <div class="input-wrap">
+              <input
+                placeholder="name@company.com"
+                formControlName="email"
+                (blur)="checkEmail()"
+                [class.input-error]="isInvalid('email') || emailExists"
+                [class.input-valid]="otpVerified"
+                [readonly]="otpVerified" />
+              <span class="status" *ngIf="emailChecking">⏳</span>
+              <span class="status valid" *ngIf="otpVerified">✓</span>
+              <span class="status invalid" *ngIf="emailExists">✗</span>
+            </div>
+            <small class="err" *ngIf="isInvalid('email') && registerForm.get('email')?.hasError('required')">
+              Email is required.
             </small>
+            <small class="err" *ngIf="isInvalid('email') && registerForm.get('email')?.hasError('email')">
+              Enter a valid email.
+            </small>
+            <small class="err" *ngIf="emailExists">Email already registered.</small>
+            <small class="ok" *ngIf="otpVerified">✓ Email verified!</small>
 
-            <div class="otp-input-row" *ngIf="otpSent">
+            <!-- OTP SECTION -->
+            <div class="otp-section" *ngIf="emailAvailable && !otpVerified">
 
-              <input type="text" class="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" [(ngModel)]="otpCode"
-                [ngModelOptions]="{standalone: true}" [class.otp-verified]="otpVerified" />
-
-              <button type="button" class="otp-verify-btn" (click)="verifyOtp()"
-                [disabled]="otpVerifying || otpCode.length !== 6">
-                {{ otpVerifying ? '⏳' : '✓ Verify' }}
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="sendOtp()"
+                [disabled]="otpSending || (otpSent && otpTimer > 0)"
+                *ngIf="!otpSent || otpTimer === 0">
+                {{ otpSending ? '⏳ Sending...' : '📧 Send OTP' }}
               </button>
 
-            </div>
-
-            <div class="otp-actions" *ngIf="otpSent && !otpVerified">
-
-              <small class="otp-timer" *ngIf="otpTimer > 0">
-                Resend in {{ otpTimer }}s
+              <small class="ok" *ngIf="otpSentMessage && !otpVerified">
+                ✅ {{ otpSentMessage }}
               </small>
 
-              <button type="button" class="otp-resend-btn" (click)="resendOtp()" *ngIf="otpTimer === 0">
-                🔄 Resend OTP
-              </button>
+              <div class="otp-row" *ngIf="otpSent">
+                <input
+                  placeholder="6-digit OTP"
+                  maxlength="6"
+                  [(ngModel)]="otpCode"
+                  [ngModelOptions]="{standalone: true}"
+                  class="otp-input" />
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  (click)="verifyOtp()"
+                  [disabled]="otpVerifying || otpCode.length !== 6">
+                  {{ otpVerifying ? '⏳' : '✓ Verify' }}
+                </button>
+              </div>
 
+              <div class="otp-meta" *ngIf="otpSent && !otpVerified">
+                <small *ngIf="otpTimer > 0">Resend in {{ otpTimer }}s</small>
+                <a *ngIf="otpTimer === 0" (click)="resendOtp()">🔄 Resend OTP</a>
+              </div>
+
+              <small class="err" *ngIf="otpError">{{ otpError }}</small>
+            </div>
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="field">
+            <label>Password</label>
+            <div class="input-wrap">
+              <input
+                type="password"
+                placeholder="Create secure password"
+                formControlName="password"
+                (input)="checkPasswordRules()"
+                [class.input-error]="isInvalid('password')"
+                [class.input-valid]="registerForm.get('password')?.valid && registerForm.get('password')?.touched" />
+              <span class="status valid"
+                *ngIf="registerForm.get('password')?.valid && registerForm.get('password')?.touched">✓</span>
             </div>
 
-            <small class="error" *ngIf="otpError">
-              {{ otpError }}
+            <!-- Strength Bar -->
+            <div class="strength-bar" *ngIf="passwordTouched">
+              <div class="str-track">
+                <div
+                  class="str-fill"
+                  [style.width.%]="passedRules * 20"
+                  [class.str-weak]="passedRules <= 2"
+                  [class.str-mid]="passedRules === 3"
+                  [class.str-good]="passedRules === 4"
+                  [class.str-strong]="passedRules === 5">
+                </div>
+              </div>
+              <small class="str-label">
+                <span *ngIf="passedRules <= 1">Weak</span>
+                <span *ngIf="passedRules === 2">Fair</span>
+                <span *ngIf="passedRules === 3">Good</span>
+                <span *ngIf="passedRules === 4">Strong</span>
+                <span *ngIf="passedRules === 5">Excellent ✓</span>
+              </small>
+            </div>
+
+            <!-- Rules -->
+            <div class="pwd-rules" *ngIf="passwordTouched">
+              <div [class.pass]="passwordRules.minLength">
+                {{ passwordRules.minLength ? '✅' : '❌' }} Min 8 characters
+              </div>
+              <div [class.pass]="passwordRules.uppercase">
+                {{ passwordRules.uppercase ? '✅' : '❌' }} Uppercase (A-Z)
+              </div>
+              <div [class.pass]="passwordRules.lowercase">
+                {{ passwordRules.lowercase ? '✅' : '❌' }} Lowercase (a-z)
+              </div>
+              <div [class.pass]="passwordRules.number">
+                {{ passwordRules.number ? '✅' : '❌' }} Number (0-9)
+              </div>
+              <div [class.pass]="passwordRules.special">
+                {{ passwordRules.special ? '✅' : '❌' }} Special (!@#$%^&*)
+              </div>
+            </div>
+
+            <small class="err" *ngIf="isInvalid('password') && registerForm.get('password')?.hasError('required')">
+              Password is required.
             </small>
-
           </div>
 
-        </div>
-
-        <!-- Password — with real-time validation -->
-        <div class="form-group field-delay-3">
-          <label>Password</label>
-
-          <div class="input-shell">
-            <span class="input-icon">🔒</span>
-
-            <input type="password" placeholder="Create secure password" formControlName="password"
-              (input)="checkPasswordRules()" [class.is-invalid]="isInvalid('password')"
-              [class.is-valid]="registerForm.get('password')?.valid && registerForm.get('password')?.touched" />
-
-            <span class="valid-check"
-              *ngIf="registerForm.get('password')?.valid && registerForm.get('password')?.touched">
-              ✓
-            </span>
-          </div>
-
-          <!-- Strength Bar -->
-          <div class="strength-bar" *ngIf="passwordTouched">
-            <div class="strength-segment" [class.seg-red]="passedRules >= 1" [class.seg-orange]="passedRules >= 2"
-              [class.seg-yellow]="passedRules >= 3" [class.seg-green]="passedRules >= 4"
-              [class.seg-strong]="passedRules >= 5">
+          <!-- CONTACT -->
+          <div class="field">
+            <label>Contact Number</label>
+            <div class="input-wrap">
+              <input
+                placeholder="10-digit number"
+                maxlength="10"
+                formControlName="contactNumber"
+                (blur)="checkPhone()"
+                [class.input-error]="isInvalid('contactNumber') || phoneExists"
+                [class.input-valid]="phoneVerified" />
+              <span class="status" *ngIf="phoneChecking">⏳</span>
+              <span class="status valid" *ngIf="phoneVerified">✓</span>
+              <span class="status invalid" *ngIf="phoneExists">✗</span>
             </div>
-            <div class="strength-segment" [class.seg-orange]="passedRules >= 2" [class.seg-yellow]="passedRules >= 3"
-              [class.seg-green]="passedRules >= 4" [class.seg-strong]="passedRules >= 5">
-            </div>
-            <div class="strength-segment" [class.seg-yellow]="passedRules >= 3" [class.seg-green]="passedRules >= 4"
-              [class.seg-strong]="passedRules >= 5">
-            </div>
-            <div class="strength-segment" [class.seg-green]="passedRules >= 4" [class.seg-strong]="passedRules >= 5">
-            </div>
-            <div class="strength-segment" [class.seg-strong]="passedRules === 5">
-            </div>
-
-            <small class="strength-label">
-              <span *ngIf="passedRules <= 1">Weak</span>
-              <span *ngIf="passedRules === 2">Fair</span>
-              <span *ngIf="passedRules === 3">Good</span>
-              <span *ngIf="passedRules === 4">Strong</span>
-              <span *ngIf="passedRules === 5">Excellent ✓</span>
+            <small class="err"
+              *ngIf="isInvalid('contactNumber') && registerForm.get('contactNumber')?.hasError('pattern')">
+              Must be exactly 10 digits.
             </small>
+            <small class="err" *ngIf="phoneExists">Already registered.</small>
+            <small class="ok" *ngIf="phoneVerified">✓ Available!</small>
           </div>
 
-          <!-- Real-time rule checklist -->
-          <div class="password-rules" *ngIf="passwordTouched">
-
-            <div class="rule-item" [class.rule-pass]="passwordRules.minLength">
-              <span class="rule-icon">{{ passwordRules.minLength ? '✅' : '❌' }}</span>
-              Minimum 8 characters
-            </div>
-
-            <div class="rule-item" [class.rule-pass]="passwordRules.uppercase">
-              <span class="rule-icon">{{ passwordRules.uppercase ? '✅' : '❌' }}</span>
-              At least 1 uppercase letter (A-Z)
-            </div>
-
-            <div class="rule-item" [class.rule-pass]="passwordRules.lowercase">
-              <span class="rule-icon">{{ passwordRules.lowercase ? '✅' : '❌' }}</span>
-              At least 1 lowercase letter (a-z)
-            </div>
-
-            <div class="rule-item" [class.rule-pass]="passwordRules.number">
-              <span class="rule-icon">{{ passwordRules.number ? '✅' : '❌' }}</span>
-              At least 1 number (0-9)
-            </div>
-
-            <div class="rule-item" [class.rule-pass]="passwordRules.special">
-              <span class="rule-icon">{{ passwordRules.special ? '✅' : '❌' }}</span>
-              At least 1 special character (!@#$%^&*)
-            </div>
-
-          </div>
-
-          <small class="error" *ngIf="isInvalid('password') && registerForm.get('password')?.hasError('required')">
-            Password is required.
-          </small>
-
-        </div>
-
-        <!-- Contact Number -->
-        <div class="form-group field-delay-4">
-          <label>Contact Number</label>
-
-          <div class="input-shell">
-            <span class="input-icon">📱</span>
-
-            <input type="text" maxlength="10" placeholder="10 digit contact number" formControlName="contactNumber"
-              (blur)="checkPhone()" [class.is-invalid]="isInvalid('contactNumber') || phoneExists"
-              [class.is-valid]="phoneVerified" />
-
-            <span class="input-status" *ngIf="phoneChecking">⏳</span>
-            <span class="valid-check" *ngIf="phoneVerified">✓</span>
-            <span class="invalid-check" *ngIf="phoneExists">✗</span>
-          </div>
-
-          <small class="error"
-            *ngIf="isInvalid('contactNumber') && registerForm.get('contactNumber')?.hasError('pattern')">
-            Contact number must be exactly 10 digits.
-          </small>
-
-          <small class="error" *ngIf="phoneExists">
-            Contact number is already registered.
-          </small>
-
-          <small class="success-text" *ngIf="phoneVerified">
-            ✓ Contact number is available!
-          </small>
-        </div>
-
-        <!-- Role -->
-        <div class="form-group full-width field-delay-5">
-          <label>Access Role</label>
-
-          <div class="input-shell">
-            <span class="input-icon">🛡️</span>
-
-            <select formControlName="role" [class.is-invalid]="isInvalid('role')"
-              [class.is-valid]="registerForm.get('role')?.valid && registerForm.get('role')?.touched">
-              <option value="">Select role</option>
-              <option value="ADMIN">ADMIN</option>
-              <option value="FLEET_MANAGER">FLEET MANAGER</option>
-              <option value="DRIVER">DRIVER</option>
-              <option value="MECHANIC">MECHANIC</option>
+          <!-- ROLE -->
+          <div class="field">
+            <label>Access Role</label>
+            <select
+              formControlName="role"
+              [class.input-error]="isInvalid('role')">
+              <option value="">Select Role</option>
+              <option value="FLEET_MANAGER">Fleet Manager</option>
+              <option value="DRIVER">Driver</option>
+              <option value="MECHANIC">Mechanic</option>
+              <option value="ADMIN">Admin</option>
             </select>
-
-            <span class="valid-check" *ngIf="registerForm.get('role')?.valid && registerForm.get('role')?.touched">
-              ✓
-            </span>
+            <small class="err" *ngIf="isInvalid('role')">Role is required.</small>
           </div>
 
-          <small class="error" *ngIf="isInvalid('role') && registerForm.get('role')?.hasError('required')">
-            Role is required.
-          </small>
+          <!-- SUBMIT -->
+          <button
+            type="submit"
+            class="btn-primary full"
+            [disabled]="!otpVerified || registerForm.invalid">
+            Create Account
+          </button>
+
+        </form>
+
+        <!-- LOGIN LINK -->
+        <div class="auth-links">
+          <p>Already have an account? <a (click)="goToLogin()">Login</a></p>
         </div>
 
       </div>
 
-      <!-- Insight -->
-      <div class="insight-callout">
-        <div class="insight-icon">📡</div>
-        <div>
-          <strong>Command profile ready</strong>
-          <p>Companies using SmartFleet Pro reduce manual fleet tracking effort and improve operational visibility.</p>
-        </div>
-      </div>
-
-      <!-- Submit -->
-      <button type="submit" class="btn-launch" [class.btn-disabled]="!otpVerified">
-        Launch My Fleet Dashboard
-        <span>→</span>
-      </button>
-
-    </form>
-
-    <!-- Login Link -->
-    <div class="login-link">
-      Already have access?
-      <button type="button" (click)="goToLogin()">Login</button>
-    </div>
+    </section>
 
   </div>
 
-</div>
-
-<!-- Launch Car Animation Overlay -->
-<div class="launch-overlay" *ngIf="launching">
-  <div class="launch-grid"></div>
-  <div class="launch-message">
-    <div class="launch-badge">ACCESS GRANTED</div>
-    <h2>Initializing Command Center</h2>
-    <p>Redirecting to login gateway...</p>
-  </div>
-  <div class="road">
-    <div class="road-line"></div>
-    <div class="speed-line speed-line-1"></div>
-    <div class="speed-line speed-line-2"></div>
-    <div class="speed-line speed-line-3"></div>
-    <div class="launch-car">🚗</div>
-  </div>
 </div>

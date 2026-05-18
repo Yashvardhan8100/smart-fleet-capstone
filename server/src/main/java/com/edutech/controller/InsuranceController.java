@@ -18,62 +18,74 @@ import java.util.Map;
 @CrossOrigin("*")
 public class InsuranceController {
 
-     @Autowired
-     private InsuranceService service;
+    @Autowired
+    private InsuranceService service;
 
-     // ✅ POST /api/insurance?vehicleId=
-     @PostMapping
-     public ResponseEntity<InsuranceDTO> addInsurance(
-               @RequestParam Long vehicleId,
-               @Valid @RequestBody Insurance insurance) {
+    // ✅ POST /api/insurance?vehicleId=
+    @PostMapping
+    public ResponseEntity<InsuranceDTO> addInsurance(
+            @RequestParam Long vehicleId,
+            @Valid @RequestBody Insurance insurance) {
 
-          return ResponseEntity.status(201).body(service.addInsurance(insurance, vehicleId));
-     }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.addInsurance(insurance, vehicleId));
+    }
 
-     // ✅ GET /api/insurance
-     @GetMapping
-     public ResponseEntity<List<InsuranceDTO>> getAllInsurance() {
-          return ResponseEntity.ok(service.getAllInsurance());
-     }
+    // ✅ GET /api/insurance
+    @GetMapping
+    public ResponseEntity<List<InsuranceDTO>> getAllInsurance() {
+        return ResponseEntity.ok(service.getAllInsurance());
+    }
 
-     // ✅ GET /api/insurance/{id}
-     @GetMapping("/{id}")
-     public ResponseEntity<InsuranceDTO> getInsuranceById(@PathVariable Long id) {
-          return ResponseEntity.ok(service.getInsuranceById(id));
-     }
+    // ✅ GET /api/insurance/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<InsuranceDTO> getInsuranceById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getInsuranceById(id));
+    }
 
-     // ✅ PUT /api/insurance/{id}?vehicleId=
-     @PutMapping("/{id}")
-     public ResponseEntity<InsuranceDTO> updateInsurance(
-               @PathVariable Long id,
-               @RequestParam Long vehicleId,
-               @Valid @RequestBody Insurance insurance) {
+    // ✅ PUT /api/insurance/{id}?vehicleId=
+    @PutMapping("/{id}")
+    public ResponseEntity<InsuranceDTO> updateInsurance(
+            @PathVariable Long id,
+            @RequestParam Long vehicleId,
+            @Valid @RequestBody Insurance insurance) {
 
-          return ResponseEntity.ok(service.updateInsurance(id, insurance, vehicleId));
-     }
+        return ResponseEntity.ok(service.updateInsurance(id, insurance, vehicleId));
+    }
 
-     // ✅ DELETE /api/insurance/{id}
-     @DeleteMapping("/{id}")
-     public ResponseEntity<?> deleteInsurance(@PathVariable Long id) {
-          service.deleteInsurance(id);
-          return ResponseEntity.ok(Map.of("message", "Insurance deleted successfully"));
-     }
+    // ✅ DELETE /api/insurance/{id} — WITH ERROR HANDLING
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteInsurance(@PathVariable Long id) {
+        try {
+            service.deleteInsurance(id);
+            return ResponseEntity.ok(Map.of("message", "Insurance deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
 
-     // ✅ GET /api/insurance/search?providerName=
-     @GetMapping("/search")
-     public ResponseEntity<List<InsuranceDTO>> searchByProviderName(@RequestParam String providerName) {
-          return ResponseEntity.ok(service.searchByProviderName(providerName));
-     }
+    // ✅ GET /api/insurance/search?providerName=
+    @GetMapping("/search")
+    public ResponseEntity<List<InsuranceDTO>> searchByProviderName(
+            @RequestParam String providerName) {
 
-     // ✅ GET /api/insurance/filter/coverage?coverageType=
-     @GetMapping("/filter/coverage")
-     public ResponseEntity<List<InsuranceDTO>> filterByCoverageType(@RequestParam String coverageType) {
-          return ResponseEntity.ok(service.filterByCoverageType(coverageType));
-     }
+        return ResponseEntity.ok(service.searchByProviderName(providerName));
+    }
 
-     // ✅ GET /api/insurance/sort/premium?order=asc|desc
-     @GetMapping("/sort/premium")
-     public ResponseEntity<List<InsuranceDTO>> sortByPremium(@RequestParam String order) {
-          return ResponseEntity.ok(service.sortByPremiumAmount(order));
-     }
+    // ✅ GET /api/insurance/filter/coverage?coverageType=
+    @GetMapping("/filter/coverage")
+    public ResponseEntity<List<InsuranceDTO>> filterByCoverageType(
+            @RequestParam String coverageType) {
+
+        return ResponseEntity.ok(service.filterByCoverageType(coverageType));
+    }
+
+    // ✅ GET /api/insurance/sort/premium?order=asc|desc
+    @GetMapping("/sort/premium")
+    public ResponseEntity<List<InsuranceDTO>> sortByPremium(
+            @RequestParam String order) {
+
+        return ResponseEntity.ok(service.sortByPremiumAmount(order));
+    }
 }

@@ -136,7 +136,6 @@ export class InsuranceComponent implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
 
-    // ✅ IMPORTANT: backend returns flattened DTO fields, not record.vehicle?.vehicleId
     this.insuranceForm.patchValue({
       vehicleId: record.vehicleId || '',
       providerName: record.providerName,
@@ -150,6 +149,7 @@ export class InsuranceComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  // ✅ ✅ FIXED DELETE METHOD
   deleteInsurance(id: number): void {
     if (!id) return;
 
@@ -158,11 +158,24 @@ export class InsuranceComponent implements OnInit {
 
     this.httpService.deleteInsurance(id).subscribe({
       next: () => {
+        // ✅ REMOVE FROM UI IMMEDIATELY
+        this.insuranceRecords = this.insuranceRecords.filter(
+          record => record.insuranceId !== id
+        );
+
         this.showMessage('Insurance record deleted successfully!', 'success');
-        this.loadInsuranceRecords();
       },
       error: (error: any) => {
-        this.showMessage(this.extractErrorMessage(error, 'Failed to delete insurance record.'), 'error');
+        // ✅ CHECK IF DELETE ACTUALLY SUCCEEDED (backend returned plain text)
+        if (error.status === 200 || error.status === 204) {
+          // Backend returned success but non-JSON response
+          this.insuranceRecords = this.insuranceRecords.filter(
+            record => record.insuranceId !== id
+          );
+          this.showMessage('Insurance record deleted successfully!', 'success');
+        } else {
+          this.showMessage(this.extractErrorMessage(error, 'Failed to delete insurance record.'), 'error');
+        }
       }
     });
   }
@@ -288,7 +301,6 @@ export class InsuranceComponent implements OnInit {
     return diffDays >= 0 && diffDays <= 30;
   }
 
-  // ✅ FIXED: expects record (DTO) not record.vehicle
   getVehicleDisplay(record: any): string {
     if (!record || !record.vehicleNumber) return 'N/A';
     return `${record.vehicleNumber} - ${record.brand || ''} ${record.model || ''}`.trim();

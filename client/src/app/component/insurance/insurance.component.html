@@ -1,4 +1,3 @@
-
 <div class="insurance-page">
 
   <!-- Page Header -->
@@ -323,8 +322,9 @@
 
             <td>{{ i + 1 }}</td>
 
+            <!-- ✅ FIXED: pass record not record.vehicle -->
             <td class="vehicle-cell">
-              {{ getVehicleDisplay(record.vehicle) }}
+              {{ getVehicleDisplay(record) }}
             </td>
 
             <td>{{ record.providerName }}</td>

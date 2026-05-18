@@ -269,16 +269,19 @@ export class VehicleComponent implements OnInit {
     });
   }
 
+
   assignDriverToVehicle(vehicleId: number, event: Event): void {
-    const selectedValue = (event.target as HTMLSelectElement).value;
+    const selectElement = event.target as HTMLSelectElement;
+    const driverId = Number(selectElement.value);
 
-    if (!vehicleId || !selectedValue) return;
-
-    const driverId = Number(selectedValue);
+    if (!vehicleId || !driverId) return;
 
     this.httpService.assignDriver(vehicleId, driverId).subscribe({
       next: () => {
         this.showMessage('Driver assigned successfully!', 'success');
+
+        selectElement.value = ''; // ✅ reset dropdown
+
         this.loadVehicles();
         this.loadDrivers();
       },
@@ -290,6 +293,7 @@ export class VehicleComponent implements OnInit {
       }
     });
   }
+
 
   resetFilters(): void {
     this.searchVehicleNumber = '';
@@ -329,10 +333,11 @@ export class VehicleComponent implements OnInit {
     );
   }
 
+
   getDriverName(vehicle: any): string {
-    if (!vehicle || !vehicle.driver) return 'Not Assigned';
-    return vehicle.driver.driverName || 'Not Assigned';
+    return vehicle.driverName ? vehicle.driverName : 'Not Assigned';
   }
+
 
   getAvailableDrivers(): any[] {
     return this.drivers.filter(driver => driver.availabilityStatus === 'Available');

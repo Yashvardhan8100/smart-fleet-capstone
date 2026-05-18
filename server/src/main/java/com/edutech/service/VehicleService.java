@@ -17,134 +17,140 @@ import java.util.stream.Collectors;
 @Service
 public class VehicleService {
 
-     // Add the required code here!
-     @Autowired
-     private VehicleRepository vehicleRepository;
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
-     @Autowired
-     private DriverRepository driverRepository;
+    @Autowired
+    private DriverRepository driverRepository;
 
-     //  convert entity to DTO
-     private VehicleDTO mapToDTO(Vehicle v) {
-          VehicleDTO dto = new VehicleDTO();
-          dto.setVehicleId(v.getVehicleId());
-          dto.setVehicleNumber(v.getVehicleNumber());
-          dto.setVehicleType(v.getVehicleType());
-          dto.setBrand(v.getBrand());
-          dto.setModel(v.getModel());
-          dto.setManufacturingYear(v.getManufacturingYear());
-          dto.setFuelType(v.getFuelType());
-          dto.setMileage(v.getMileage());
-          dto.setStatus(v.getStatus());
+    // ✅ MAP ENTITY TO DTO
+    private VehicleDTO mapToDTO(Vehicle v) {
+        VehicleDTO dto = new VehicleDTO();
 
-          if (v.getDriver() != null) {
-               dto.setDriverId(v.getDriver().getDriverId());
-               dto.setDriverName(v.getDriver().getDriverName());
-          }
-          return dto;
-     }
+        dto.setVehicleId(v.getVehicleId());
+        dto.setVehicleNumber(v.getVehicleNumber());
+        dto.setVehicleType(v.getVehicleType());
+        dto.setBrand(v.getBrand());
+        dto.setModel(v.getModel());
+        dto.setManufacturingYear(v.getManufacturingYear());
+        dto.setFuelType(v.getFuelType());
+        dto.setMileage(v.getMileage());
+        dto.setStatus(v.getStatus());
 
-     //  POST /api/vehicles
-     public VehicleDTO addVehicle(Vehicle vehicle) {
-          if (vehicleRepository.findByVehicleNumber(vehicle.getVehicleNumber()).isPresent()) {
-               throw new DuplicateResourceException("vehicleNumber already exists");
-          }
-          return mapToDTO(vehicleRepository.save(vehicle));
-     }
+        if (v.getDriver() != null) {
+            dto.setDriverId(v.getDriver().getDriverId());
+            dto.setDriverName(v.getDriver().getDriverName());
+        }
 
-     //  GET /api/vehicles
-     public List<VehicleDTO> getAllVehicles() {
-          return vehicleRepository.findAll()
-                    .stream().map(this::mapToDTO).collect(Collectors.toList());
-     }
+        return dto;
+    }
 
-     //  GET /api/vehicles/{id}
-     public VehicleDTO getVehicleById(Long id) {
-          Vehicle v = vehicleRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
-          return mapToDTO(v);
-     }
+    // ✅ ADD VEHICLE
+    public VehicleDTO addVehicle(Vehicle vehicle) {
+        if (vehicleRepository.existsByVehicleNumber(vehicle.getVehicleNumber())) {
+            throw new DuplicateResourceException("vehicleNumber already exists");
+        }
+        return mapToDTO(vehicleRepository.save(vehicle));
+    }
 
-     //  PUT /api/vehicles/{id}
-     public VehicleDTO updateVehicle(Long id, Vehicle updated) {
-          Vehicle v = vehicleRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+    // ✅ GET ALL
+    public List<VehicleDTO> getAllVehicles() {
+        return vehicleRepository.findAll()
+                .stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
 
-          // duplicate check
-          if (!v.getVehicleNumber().equals(updated.getVehicleNumber()) &&
-                    vehicleRepository.findByVehicleNumber(updated.getVehicleNumber()).isPresent()) {
-               throw new DuplicateResourceException("vehicleNumber already exists");
-          }
+    // ✅ GET BY ID
+    public VehicleDTO getVehicleById(Long id) {
+        Vehicle v = vehicleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+        return mapToDTO(v);
+    }
 
-          v.setVehicleNumber(updated.getVehicleNumber());
-          v.setVehicleType(updated.getVehicleType());
-          v.setBrand(updated.getBrand());
-          v.setModel(updated.getModel());
-          v.setManufacturingYear(updated.getManufacturingYear());
-          v.setFuelType(updated.getFuelType());
-          v.setMileage(updated.getMileage());
-          v.setStatus(updated.getStatus());
+    // ✅ UPDATE
+    public VehicleDTO updateVehicle(Long id, Vehicle updated) {
+        Vehicle v = vehicleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
 
-          return mapToDTO(vehicleRepository.save(v));
-     }
+        if (!v.getVehicleNumber().equals(updated.getVehicleNumber()) &&
+                vehicleRepository.existsByVehicleNumber(updated.getVehicleNumber())) {
+            throw new DuplicateResourceException("vehicleNumber already exists");
+        }
 
-     //  DELETE /api/vehicles/{id}
-     public void deleteVehicle(Long id) {
-          Vehicle v = vehicleRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
-          vehicleRepository.delete(v);
-     }
+        v.setVehicleNumber(updated.getVehicleNumber());
+        v.setVehicleType(updated.getVehicleType());
+        v.setBrand(updated.getBrand());
+        v.setModel(updated.getModel());
+        v.setManufacturingYear(updated.getManufacturingYear());
+        v.setFuelType(updated.getFuelType());
+        v.setMileage(updated.getMileage());
+        v.setStatus(updated.getStatus());
 
-     // SEARCH by vehicle number
-     public VehicleDTO searchByVehicleNumber(String num) {
-          Vehicle v = vehicleRepository.findByVehicleNumber(num)
-                    .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
-          return mapToDTO(v);
-     }
+        return mapToDTO(vehicleRepository.save(v));
+    }
 
-     // SEARCH by brand
-     public List<VehicleDTO> searchByBrand(String brand) {
-          return vehicleRepository.findByBrandIgnoreCase(brand)
-                    .stream().map(this::mapToDTO).collect(Collectors.toList());
-     }
+    // ✅ DELETE
+    public void deleteVehicle(Long id) {
+        Vehicle v = vehicleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+        vehicleRepository.delete(v);
+    }
 
-     // FILTER by status
-     public List<VehicleDTO> filterByStatus(String status) {
-          return vehicleRepository.findByStatus(status)
-                    .stream().map(this::mapToDTO).collect(Collectors.toList());
-     }
+    // ✅ SEARCH
+    public VehicleDTO searchByVehicleNumber(String num) {
+        Vehicle v = vehicleRepository.findByVehicleNumber(num)
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+        return mapToDTO(v);
+    }
 
-     // SORT by year
-     public List<VehicleDTO> sortByManufacturingYear(String order) {
-          List<Vehicle> list = "desc".equalsIgnoreCase(order)
-                    ? vehicleRepository.findAllSortedByYearDesc()
-                    : vehicleRepository.findAllSortedByYearAsc();
+    public List<VehicleDTO> searchByBrand(String brand) {
+        return vehicleRepository.findByBrandIgnoreCaseContaining(brand)
+                .stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
 
-          return list.stream().map(this::mapToDTO).collect(Collectors.toList());
-     }
+    public List<VehicleDTO> filterByStatus(String status) {
+        return vehicleRepository.findByStatus(status)
+                .stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
 
-     //  SORT by mileage
-     public List<VehicleDTO> sortByMileage(String order) {
-          List<Vehicle> list = "desc".equalsIgnoreCase(order)
-                    ? vehicleRepository.findAllSortedByMileageDesc()
-                    : vehicleRepository.findAllSortedByMileageAsc();
+    // ✅ SORT
+    public List<VehicleDTO> sortByManufacturingYear(String order) {
+        List<Vehicle> list = "desc".equalsIgnoreCase(order)
+                ? vehicleRepository.findAllByOrderByManufacturingYearDesc()
+                : vehicleRepository.findAllByOrderByManufacturingYearAsc();
 
-          return list.stream().map(this::mapToDTO).collect(Collectors.toList());
-     }
+        return list.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
 
-     // ASSIGN DRIVER
-     public VehicleDTO assignDriver(Long vehicleId, Long driverId) {
-          Vehicle v = vehicleRepository.findById(vehicleId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+    public List<VehicleDTO> sortByMileage(String order) {
+        List<Vehicle> list = "desc".equalsIgnoreCase(order)
+                ? vehicleRepository.findAllByOrderByMileageDesc()
+                : vehicleRepository.findAllByOrderByMileageAsc();
 
-          Driver d = driverRepository.findById(driverId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
+        return list.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
 
-          v.setDriver(d);
-          d.setAvailabilityStatus("Assigned");
+    // ✅ ✅ FINAL DRIVER ASSIGN LOGIC
+    public VehicleDTO assignDriver(Long vehicleId, Long driverId) {
 
-          driverRepository.save(d);
+        Vehicle v = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
 
-          return mapToDTO(vehicleRepository.save(v));
-     }
+        Driver d = driverRepository.findById(driverId)
+                .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
+
+        // ✅ prevent double assignment
+        if (!"Available".equalsIgnoreCase(d.getAvailabilityStatus())) {
+            throw new RuntimeException("Driver already assigned");
+        }
+
+        v.setDriver(d);
+        v.setStatus("Active");
+
+        d.setAvailabilityStatus("Assigned");
+
+        vehicleRepository.save(v);
+        driverRepository.save(d);
+
+        return mapToDTO(v);
+    }
 }

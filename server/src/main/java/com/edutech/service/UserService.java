@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.edutech.entity.Role;
 import com.edutech.entity.User;
 import com.edutech.exception.ResourceNotFoundException;
 import com.edutech.repository.UserRepository;
@@ -76,7 +77,7 @@ public class UserService implements UserDetailsService {
 
         // ✅ RESTRICT MULTIPLE ADMIN
         if ("ADMIN".equalsIgnoreCase(user.getRole().toString())
-                && userRepository.existsByRole("ADMIN")) {
+                && userRepository.existsByRole(Role.ADMIN)) {
 
             throw new RuntimeException("Only one admin is allowed.");
         }

@@ -223,7 +223,7 @@
             </div>
             <small class="err"
               *ngIf="isInvalid('contactNumber') && registerForm.get('contactNumber')?.hasError('pattern')">
-              Must be exactly 10 digits.
+              Must be exactly 10 digits starting with 6-9.
             </small>
             <small class="err" *ngIf="phoneExists">Already registered.</small>
             <small class="ok" *ngIf="phoneVerified">✓ Available!</small>

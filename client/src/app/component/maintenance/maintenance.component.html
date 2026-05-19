@@ -85,6 +85,10 @@
 
     </form>
 
+    <!-- ✅ SUCCESS/ERROR MESSAGES (ADDED) -->
+    <div class="alert alert-success" *ngIf="successMessage">✅ {{ successMessage }}</div>
+    <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+
   </div>
 
   <!-- TABLE -->
@@ -117,7 +121,6 @@
 
           <td>{{ i + 1 }}</td>
 
-          <!-- ✅ FIXED vehicle binding -->
           <td class="vehicle-cell">
             {{ getVehicleDisplay(record) }}
           </td>
@@ -133,7 +136,6 @@
           <td>{{ record.nextServiceDate || 'N/A' }}</td>
           <td>{{ record.remarks || 'N/A' }}</td>
 
-          <!-- ✅ ✅ STYLING FIXED -->
           <td class="action-cell">
             <button class="btn-edit" (click)="editMaintenance(record)">
               Edit
@@ -158,4 +160,66 @@
 
   </div>
 
+  <div class="glass-card">
+
+    <div class="section-header">
+      <div>
+        <h3>Search & Filter</h3>
+        <p>Find maintenance records by service type or service date</p>
+      </div>
+    </div>
+
+    <div class="filter-grid">
+
+      <!-- 🔍 Search by Service Type -->
+      <div class="filter-item">
+        <label>Search by Service Type</label>
+
+        <div class="input-action">
+          <input type="text" class="form-control" placeholder="Service type" [(ngModel)]="searchServiceType" />
+
+          <button type="button" class="btn-primary-dark" (click)="searchByServiceType()">
+            Search
+          </button>
+        </div>
+      </div>
+
+      <!-- 📅 Filter by Service Date -->
+      <div class="filter-item">
+        <label>Filter by Service Date</label>
+
+        <div class="input-action">
+          <input type="date" class="form-control" [(ngModel)]="filterDate" />
+
+          <button type="button" class="btn-primary-dark" (click)="filterByServiceDate()">
+            Filter
+          </button>
+        </div>
+      </div>
+
+      <!-- 🔄 Reset -->
+      <div class="filter-item">
+        <label>&nbsp;</label>
+
+        <button type="button" class="btn-reset" (click)="loadMaintenanceRecords()">
+          Reset
+        </button>
+      </div>
+
+    </div>
+
+    <!-- 🔽 Sort -->
+    <div class="sort-box">
+      <span>Sort by Cost:</span>
+
+      <button type="button" class="sort-btn" (click)="sortByCost('asc')">
+        ↑ Asc
+      </button>
+
+      <button type="button" class="sort-btn" (click)="sortByCost('desc')">
+        ↓ Desc
+      </button>
+    </div>
+
+  </div>
 </div>

@@ -63,7 +63,7 @@ export class RegisterComponent implements OnDestroy {
         Validators.required,
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/)
       ]],
-      contactNumber: ['', [Validators.pattern('^[0-9]{10}$')]],
+      contactNumber: ['', [Validators.pattern('^[6-9][0-9]{9}$')]],
       role: ['', Validators.required]
     });
   }

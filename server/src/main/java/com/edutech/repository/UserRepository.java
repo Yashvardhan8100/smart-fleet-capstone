@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.edutech.entity.Role;
 import com.edutech.entity.User;
 
 @Repository
@@ -35,5 +36,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
      // ✅ NEW — Find by email (for login + forgot password)
      Optional<User> findByEmail(String email);
 
-     boolean existsByRole(String role);
+     boolean existsByRole(Role role);
 }

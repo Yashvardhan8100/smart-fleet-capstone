@@ -4,19 +4,22 @@ import { AuthService } from './services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
-     
-constructor(
+
+  constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   canActivate(): boolean {
-    if (this.authService.isLoggedIn()) {
+
+    // ✅ DIRECTLY READ TOKEN from localStorage (NO timing issue)
+    const token = localStorage.getItem('token');
+
+    if (token && token !== '') {
       return true;
     }
 
-    this.router.navigate(['/login']);
+    this.router.navigateByUrl('/login');
     return false;
   }
-
 }

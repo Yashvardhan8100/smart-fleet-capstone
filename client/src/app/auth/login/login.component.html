@@ -1,11 +1,11 @@
 <div class="login-page">
 
-  <!-- ✅ TOP LEFT CORNER -->
+
   <a class="back-link" (click)="goHome()">← Back to Home</a>
 
   <div class="login-layout">
 
-    <!-- LEFT -->
+   
     <section class="left-panel">
       <div class="left-content">
         <h1>Command <span class="grad">Every Mile</span></h1>
@@ -13,12 +13,12 @@
       </div>
     </section>
 
-    <!-- RIGHT -->
+
     <section class="right-panel">
 
       <div class="auth-card">
 
-        <!-- BRAND -->
+ 
         <div class="brand">
           <span class="brand-icon">🚚</span>
           <div>
@@ -27,88 +27,117 @@
           </div>
         </div>
 
-        <!-- ✅ LOGIN FORM -->
+
         <div *ngIf="!forgotMode">
 
-          <h3>Login to your account</h3>
+        
+          <div *ngIf="loginStep === 'credentials'">
 
-          <div class="alert-error" *ngIf="loginError">
-            {{ loginError }}
+            <h3>Login to your account</h3>
+
+            <div class="alert-error" *ngIf="loginError">
+              {{ loginError }}
+            </div>
+
+            <form [formGroup]="loginForm" (ngSubmit)="handleLogin()">
+
+              <div class="field icon-field">
+                <span class="icon">✉️</span>
+                <input placeholder="Username or Email" formControlName="username"
+                  [class.input-error]="isLoginInvalid('username')" />
+                <small class="err" *ngIf="isLoginInvalid('username')">
+                  Username or Email is required
+                </small>
+              </div>
+
+              <div class="field icon-field">
+                <span class="icon">🔒</span>
+                <input type="password" placeholder="Password" formControlName="password"
+                  [class.input-error]="isLoginInvalid('password')" />
+                <small class="err" *ngIf="isLoginInvalid('password')">
+                  Password is required
+                </small>
+              </div>
+
+              <button type="submit" class="btn-primary full" [disabled]="loginLoading">
+                {{ loginLoading ? 'Authenticating...' : 'Login' }}
+              </button>
+
+            </form>
+
+            <div class="auth-links">
+              <a (click)="showForgot()">Forgot password?</a>
+              <p>Don't have an account? <a (click)="goRegister()">Register</a></p>
+            </div>
+
           </div>
 
-          <form [formGroup]="loginForm" (ngSubmit)="handleLogin()">
 
-            <!-- ✅ USERNAME -->
-            <div class="field icon-field">
-              <span class="icon">✉️</span>
+          <div *ngIf="loginStep === 'otp'">
 
-              <input
-                placeholder="Username or Email"
-                formControlName="username"
-                [class.input-error]="isLoginInvalid('username')" />
+            <a class="forgot-back" (click)="loginBackToCredentials()">← Back</a>
 
-              <!-- ✅ ERROR -->
-              <small class="err" *ngIf="isLoginInvalid('username')">
-                Username or Email is required
-              </small>
+            <h3>Verify Email OTP</h3>
+
+            <div class="alert-error" *ngIf="loginError">
+              {{ loginError }}
             </div>
 
-            <!-- ✅ PASSWORD -->
-            <div class="field icon-field">
-              <span class="icon">🔒</span>
-
-              <input
-                type="password"
-                placeholder="Password"
-                formControlName="password"
-                [class.input-error]="isLoginInvalid('password')" />
-
-              <!-- ✅ ERROR -->
-              <small class="err" *ngIf="isLoginInvalid('password')">
-                Password is required
-              </small>
+            <div class="alert-success" *ngIf="loginOtpMessage">
+              {{ loginOtpMessage }}
             </div>
 
-            <!-- BUTTON -->
-            <button type="submit" class="btn-primary full">
-              {{ loginLoading ? 'Authenticating...' : 'Login' }}
+            <div class="alert-success" *ngIf="loginSuccess">
+              ✅ Login successful! Redirecting...
+            </div>
+
+            <p class="muted">
+              We've sent a 6-digit OTP to your registered email for verification.
+            </p>
+
+            <input type="text" maxlength="6" [(ngModel)]="loginOtpCode" [ngModelOptions]="{standalone: true}"
+              placeholder="Enter 6-digit OTP" class="otp-input-field" />
+
+            <button class="btn-primary full" (click)="loginVerifyOtp()" [disabled]="loginLoading">
+
+              {{ loginLoading ? 'Verifying...' : 'Verify & Login' }}
             </button>
 
-          </form>
+            <p class="muted" *ngIf="loginOtpTimer > 0">
+              Resend in {{ loginOtpTimer }}s
+            </p>
 
-          <div class="auth-links">
-            <a (click)="showForgot()">Forgot password?</a>
-            <p>Don't have an account? <a (click)="goRegister()">Register</a></p>
+            <a class="resend-link" *ngIf="loginOtpTimer === 0" (click)="loginResendOtp()">
+              🔄 Resend OTP
+            </a>
+
           </div>
 
         </div>
 
-        <!-- ✅ FORGOT PASSWORD -->
+   
         <div *ngIf="forgotMode">
 
           <a class="forgot-back" (click)="backToLogin()">← Back to Login</a>
 
-          <!-- STEP 1 -->
+      
           <div *ngIf="forgotStep === 'email'">
             <h3>Forgot Password</h3>
-            <p class="muted">Enter your registered email to receive OTP.</p>
 
             <div class="alert-error" *ngIf="forgotError">
               {{ forgotError }}
             </div>
 
-            <input placeholder="Email Address" [(ngModel)]="forgotEmail" />
+            <input placeholder="Email Address" [(ngModel)]="forgotEmail" [ngModelOptions]="{standalone: true}" />
 
-            <button class="btn-primary full"
-              (click)="forgotSendOtp()"
-              [disabled]="forgotOtpSending">
-
+            <button class="btn-primary full" (click)="forgotSendOtp()" [disabled]="forgotOtpSending">
               {{ forgotOtpSending ? 'Sending...' : 'Send OTP' }}
             </button>
           </div>
 
-          <!-- STEP 2 -->
+
           <div *ngIf="forgotStep === 'otp'">
+
             <h3>Verify OTP</h3>
 
             <div class="alert-error" *ngIf="forgotError">
@@ -119,14 +148,10 @@
               {{ forgotMessage }}
             </div>
 
-            <input placeholder="6-digit OTP"
-                   maxlength="6"
-                   [(ngModel)]="forgotOtpCode" />
+            <input placeholder="6-digit OTP" maxlength="6" [(ngModel)]="forgotOtpCode"
+              [ngModelOptions]="{standalone: true}" />
 
-            <button class="btn-primary full"
-              (click)="forgotVerifyOtp()"
-              [disabled]="forgotOtpVerifying">
-
+            <button class="btn-primary full" (click)="forgotVerifyOtp()" [disabled]="forgotOtpVerifying">
               {{ forgotOtpVerifying ? 'Verifying...' : 'Verify OTP' }}
             </button>
 
@@ -134,41 +159,33 @@
               Resend in {{ forgotOtpTimer }}s
             </p>
 
-            <a *ngIf="forgotOtpTimer === 0"
-              (click)="forgotResendOtp()">
+            <a *ngIf="forgotOtpTimer === 0" (click)="forgotResendOtp()">
               Resend OTP
             </a>
           </div>
 
-          <!-- STEP 3 -->
           <div *ngIf="forgotStep === 'reset'">
+
             <h3>Set New Password</h3>
 
             <div class="alert-error" *ngIf="forgotError">
               {{ forgotError }}
             </div>
 
-            <input type="password"
-                   placeholder="New Password"
-                   [(ngModel)]="forgotNewPassword"
-                   (input)="checkForgotPasswordRules()" />
+  
+            <input type="password" placeholder="New Password" [(ngModel)]="forgotNewPassword"
+              [ngModelOptions]="{standalone: true}" />
 
-            <input type="password"
-                   placeholder="Confirm Password"
-                   [(ngModel)]="forgotConfirmPassword" />
+            <input type="password" placeholder="Confirm Password" [(ngModel)]="forgotConfirmPassword"
+              [ngModelOptions]="{standalone: true}" />
 
-            <button class="btn-primary full"
-              (click)="forgotResetPassword()"
-              [disabled]="forgotResetting">
-
+            <button class="btn-primary full" (click)="forgotResetPassword()" [disabled]="forgotResetting">
               {{ forgotResetting ? 'Resetting...' : 'Reset Password' }}
             </button>
           </div>
 
-          <!-- STEP 4 -->
           <div *ngIf="forgotStep === 'success'" class="success-box">
             <h3>✅ Password Reset!</h3>
-            <p>Redirecting to login...</p>
           </div>
 
         </div>

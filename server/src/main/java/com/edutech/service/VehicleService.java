@@ -130,27 +130,47 @@ public class VehicleService {
     }
 
     // ✅ ✅ FINAL DRIVER ASSIGN LOGIC
+
+    // ✅ ✅ FINAL DRIVER ASSIGN LOGIC (FIXED)
     public VehicleDTO assignDriver(Long vehicleId, Long driverId) {
 
         Vehicle v = vehicleRepository.findById(vehicleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
 
-        Driver d = driverRepository.findById(driverId)
+        Driver newDriver = driverRepository.findById(driverId)
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-        // ✅ prevent double assignment
-        if (!"Available".equalsIgnoreCase(d.getAvailabilityStatus())) {
-            throw new RuntimeException("Driver already assigned");
+        // ✅ STEP 1: If vehicle already has a driver → remove old one
+        Driver oldDriver = v.getDriver();
+        if (oldDriver != null) {
+            oldDriver.setAvailabilityStatus("Available");
+            driverRepository.save(oldDriver);
         }
 
-        v.setDriver(d);
+        // ✅ STEP 2: If new driver is already assigned to another vehicle → remove from
+        // that vehicle
+        List<Vehicle> allVehicles = vehicleRepository.findAll();
+
+        for (Vehicle vehicle : allVehicles) {
+            if (vehicle.getDriver() != null &&
+                    vehicle.getDriver().getDriverId().equals(newDriver.getDriverId())) {
+
+                vehicle.setDriver(null);
+                vehicleRepository.save(vehicle);
+                break;
+            }
+        }
+
+        // ✅ STEP 3: Assign new driver
+        v.setDriver(newDriver);
         v.setStatus("Active");
 
-        d.setAvailabilityStatus("Assigned");
+        newDriver.setAvailabilityStatus("Assigned");
 
+        driverRepository.save(newDriver);
         vehicleRepository.save(v);
-        driverRepository.save(d);
 
         return mapToDTO(v);
     }
+
 }

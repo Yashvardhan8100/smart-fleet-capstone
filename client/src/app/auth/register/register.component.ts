@@ -72,9 +72,9 @@ export class RegisterComponent implements OnDestroy {
     this.stopOtpTimer();
   }
 
-  // ==========================================
+    
   // NAVIGATION
-  // ==========================================
+    
 
   goHome(): void {
     this.router.navigate(['/']);
@@ -84,9 +84,9 @@ export class RegisterComponent implements OnDestroy {
     this.router.navigate(['/login']);
   }
 
-  // ==========================================
+    
   // USERNAME
-  // ==========================================
+    
 
   checkUsername(): void {
     const username = this.registerForm.get('username')?.value?.trim();
@@ -109,9 +109,9 @@ export class RegisterComponent implements OnDestroy {
     });
   }
 
-  // ==========================================
+    
   // EMAIL
-  // ==========================================
+    
 
   checkEmail(): void {
     const email = this.registerForm.get('email')?.value?.trim();
@@ -140,9 +140,9 @@ export class RegisterComponent implements OnDestroy {
     });
   }
 
-  // ==========================================
+    
   // OTP
-  // ==========================================
+    
 
   sendOtp(): void {
     const email = this.registerForm.get('email')?.value?.trim();
@@ -219,9 +219,9 @@ export class RegisterComponent implements OnDestroy {
     this.otpTimer = 0;
   }
 
-  // ==========================================
+    
   // PHONE
-  // ==========================================
+    
 
   checkPhone(): void {
     const phone = this.registerForm.get('contactNumber')?.value?.trim();
@@ -244,9 +244,9 @@ export class RegisterComponent implements OnDestroy {
     });
   }
 
-  // ==========================================
+    
   // PASSWORD
-  // ==========================================
+    
 
   checkPasswordRules(): void {
     this.passwordTouched = true;
@@ -266,9 +266,9 @@ export class RegisterComponent implements OnDestroy {
     return [r.minLength, r.uppercase, r.lowercase, r.number, r.special].filter(Boolean).length;
   }
 
-  // ==========================================
+    
   // REGISTER
-  // ==========================================
+    
 
   register(): void {
     this.submitted = true;
@@ -308,9 +308,9 @@ export class RegisterComponent implements OnDestroy {
     });
   }
 
-  // ==========================================
+    
   // HELPERS
-  // ==========================================
+    
 
   isInvalid(name: string): boolean {
     const c = this.registerForm.get(name);

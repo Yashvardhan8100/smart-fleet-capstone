@@ -61,10 +61,8 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // ✅ FIX — Resolve email to username before authenticating
             String actualUsername = authRequest.getUsername();
 
-            // Check if input is an email (contains @)
             if (actualUsername != null && actualUsername.contains("@")) {
                 try {
                     User userByEmail = userService.findByEmail(actualUsername);
@@ -75,22 +73,21 @@ public class AuthController {
                 }
             }
 
-            // Authenticate with actual username
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             actualUsername,
                             authRequest.getPassword()));
 
-            // Load user details and generate token
             UserDetails userDetails = userService.loadUserByUsername(actualUsername);
             String token = jwtUtil.generateToken(userDetails.getUsername());
 
-            // Get user role
+
             User user = userService.findByUsername(actualUsername);
 
             response.put("token", token);
             response.put("username", user.getUsername());
             response.put("role", user.getRole().name());
+            response.put("email", user.getEmail());
 
             return ResponseEntity.ok(response);
 

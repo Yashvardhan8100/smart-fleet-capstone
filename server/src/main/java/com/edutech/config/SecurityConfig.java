@@ -72,8 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                                 "/api/auth/send-otp",
                                                 "/api/auth/verify-otp",
                                                 "/api/auth/forgot-password/**",
-                                                "/api/contact"
-                                        )
+                                                "/api/contact")
                                 .permitAll()
 
                                 // ✅ NEW — DRIVER can update own status
@@ -83,6 +82,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                 .antMatchers("/api/vehicles/**").hasAnyRole("ADMIN", "FLEET_MANAGER")
                                 .antMatchers("/api/drivers/**").hasAnyRole("ADMIN", "FLEET_MANAGER")
                                 .antMatchers("/api/maintenance/**").hasAnyRole("ADMIN", "MECHANIC")
+                                .antMatchers("/api/drivers/my-profile")
+                                .hasAnyRole("ADMIN", "FLEET_MANAGER", "DRIVER")
 
                                 .anyRequest().authenticated()
                                 .and()

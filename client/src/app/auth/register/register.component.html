@@ -1,11 +1,10 @@
 <div class="register-page">
 
-  <!-- ✅ TOP LEFT CORNER (FIXED) -->
+ 
   <a class="back-link" (click)="goHome()">← Back to Home</a>
 
   <div class="register-layout">
 
-    <!-- LEFT PANEL -->
     <section class="left-panel">
 
       <div class="left-content">
@@ -41,12 +40,12 @@
       </div>
     </section>
 
-    <!-- RIGHT PANEL -->
+   
     <section class="right-panel">
 
       <div class="auth-card">
 
-        <!-- BRAND -->
+   
         <div class="brand">
           <span class="brand-icon">🚚</span>
           <div>
@@ -55,11 +54,9 @@
           </div>
         </div>
 
-        <!-- ALERTS -->
-        <div class="alert-success" *ngIf="successMessage">✅ {{ successMessage }}</div>
+         <div class="alert-success" *ngIf="successMessage">✅ {{ successMessage }}</div>
         <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-        <!-- FORM -->
         <form [formGroup]="registerForm" (ngSubmit)="register()">
 
           <!-- USERNAME -->

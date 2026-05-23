@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../model/user';
 import { LoginRequest } from '../model/loginrequest';
@@ -12,17 +12,15 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
+  // ✅ FIXED — Removed auto login (NO tap, NO saveLoginData here)
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(
       `${this.serverName}/api/auth/login`,
       loginRequest
-    ).pipe(
-      tap((response: LoginResponse) => {
-        this.saveLoginData(response);
-      })
     );
   }
 
+  // ✅ Only called AFTER OTP verification
   saveLoginData(response: LoginResponse): void {
     if (response) {
       const token = response.token || response.jwtToken;
@@ -67,20 +65,12 @@ export class AuthService {
     localStorage.setItem('token', token);
   }
 
-  saveToken(token: string): void {
-    this.setToken(token);
-  }
-
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
   setRole(role: string): void {
     localStorage.setItem('role', role);
-  }
-
-  saveRole(role: string): void {
-    this.setRole(role);
   }
 
   getRole(): string | null {
@@ -119,10 +109,6 @@ export class AuthService {
     localStorage.removeItem('username');
   }
 
-  clearStorage(): void {
-    this.logout();
-  }
-
   getAuthHeaders(): HttpHeaders {
     const token = this.getToken();
 
@@ -135,28 +121,26 @@ export class AuthService {
     return new HttpHeaders();
   }
 
-  // ✅ NEW — Check if username already exists
+  // ✅ Validation APIs
   checkUsername(username: string): Observable<any> {
     return this.http.get<any>(
       `${this.serverName}/api/auth/check-username?username=${username}`
     );
   }
 
-  // ✅ NEW — Check if email already exists
   checkEmail(email: string): Observable<any> {
     return this.http.get<any>(
       `${this.serverName}/api/auth/check-email?email=${email}`
     );
   }
 
-  // ✅ NEW — Check if contact number already exists
   checkPhone(contactNumber: string): Observable<any> {
     return this.http.get<any>(
       `${this.serverName}/api/auth/check-phone?contactNumber=${contactNumber}`
     );
   }
 
-  // ✅ NEW — Send OTP to email
+  // ✅ EMAIL OTP
   sendOtp(email: string): Observable<any> {
     return this.http.post<any>(
       `${this.serverName}/api/auth/send-otp?email=${email}`,
@@ -164,7 +148,6 @@ export class AuthService {
     );
   }
 
-  // ✅ NEW — Verify OTP
   verifyOtp(email: string, otp: string): Observable<any> {
     return this.http.post<any>(
       `${this.serverName}/api/auth/verify-otp?email=${email}&otp=${otp}`,
@@ -172,7 +155,7 @@ export class AuthService {
     );
   }
 
-  // ✅ NEW — Forgot Password: Send OTP
+  // ✅ Forgot password
   forgotPasswordSendOtp(email: string): Observable<any> {
     return this.http.post<any>(
       `${this.serverName}/api/auth/forgot-password/send-otp?email=${email}`,
@@ -180,7 +163,6 @@ export class AuthService {
     );
   }
 
-  // ✅ NEW — Forgot Password: Verify OTP
   forgotPasswordVerifyOtp(email: string, otp: string): Observable<any> {
     return this.http.post<any>(
       `${this.serverName}/api/auth/forgot-password/verify-otp?email=${email}&otp=${otp}`,
@@ -188,7 +170,6 @@ export class AuthService {
     );
   }
 
-  // ✅ NEW — Reset Password
   resetPassword(email: string, newPassword: string): Observable<any> {
     return this.http.post<any>(
       `${this.serverName}/api/auth/forgot-password/reset?email=${email}&newPassword=${newPassword}`,

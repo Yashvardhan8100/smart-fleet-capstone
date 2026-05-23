@@ -33,6 +33,9 @@ public class Driver {
      @NotBlank
      private String availabilityStatus;
 
+     @OneToOne(mappedBy = "driver")
+     private Vehicle vehicle;
+
      public Driver() {
      }
 

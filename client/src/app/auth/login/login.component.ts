@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -8,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy {
 
   // Forgot password
   forgotMode = false;
@@ -30,12 +30,21 @@ export class LoginComponent implements OnDestroy {
   };
   forgotPasswordTouched = false;
 
-  // Login
+
   loginForm: FormGroup;
   loginSubmitted = false;
   loginError = '';
   loginLoading = false;
   loginSuccess = false;
+
+
+  loginStep: 'credentials' | 'otp' = 'credentials';
+  loginOtpCode = '';
+  loginOtpMessage = '';
+  loginOtpTimer = 0;
+  loginOtpTimerInterval: any = null;
+  private storedLoginResponse: any = null;
+  private loginUserEmail = '';
 
   constructor(
     private fb: FormBuilder,
@@ -48,15 +57,23 @@ export class LoginComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.stopForgotOtpTimer();
+
+  ngOnInit(): void {
+    this.loginStep = 'credentials';
+    this.loginSuccess = false;
+    this.loginError = '';
   }
 
-  // Navigation
-  goHome(): void { this.router.navigate(['/']); }
-  goRegister(): void { this.router.navigate(['/register']); }
+  ngOnDestroy(): void {
+    this.stopForgotOtpTimer();
+    this.stopLoginOtpTimer();
+  }
 
-  // Login
+
+  goHome(): void { this.router.navigateByUrl('/'); }
+  goRegister(): void { this.router.navigateByUrl('/register'); }
+
+
   handleLogin(): void {
     this.loginSubmitted = true;
     this.loginError = '';
@@ -65,11 +82,22 @@ export class LoginComponent implements OnDestroy {
     this.loginLoading = true;
 
     this.authService.login(this.loginForm.value).subscribe({
-      next: (res) => {
-        this.loginLoading = false;
-        this.loginSuccess = true;
-        this.authService.saveLoginData(res);
-        setTimeout(() => this.router.navigate(['/dashboard']), 1000);
+      next: (res: any) => {
+        this.storedLoginResponse = res;
+        this.loginUserEmail = res.email;
+
+        this.authService.sendOtp(this.loginUserEmail).subscribe({
+          next: () => {
+            this.loginLoading = false;
+            this.loginStep = 'otp';
+            this.loginOtpMessage = 'OTP sent to ' + this.maskEmail(this.loginUserEmail);
+            this.startLoginOtpTimer();
+          },
+          error: () => {
+            this.loginLoading = false;
+            this.loginError = 'Failed to send OTP';
+          }
+        });
       },
       error: () => {
         this.loginLoading = false;
@@ -78,7 +106,97 @@ export class LoginComponent implements OnDestroy {
     });
   }
 
-  // Forgot password
+
+  loginVerifyOtp(): void {
+    if (!this.loginOtpCode || this.loginOtpCode.length !== 6) {
+      this.loginError = 'Enter a valid 6-digit OTP.';
+      return;
+    }
+
+    this.loginLoading = true;
+    this.loginError = '';
+    this.loginOtpMessage = '';
+
+    this.authService.verifyOtp(this.loginUserEmail, this.loginOtpCode).subscribe({
+      next: (res: any) => {
+        this.loginLoading = false;
+
+        if (res?.verified) {
+          this.loginSuccess = true;
+
+      
+          this.authService.saveLoginData(this.storedLoginResponse);
+
+          this.stopLoginOtpTimer();
+
+
+          this.router.navigateByUrl('/dashboard');
+
+        } else {
+          this.loginError = res?.message || 'Invalid OTP';
+        }
+      },
+      error: () => {
+        this.loginLoading = false;
+        this.loginError = 'OTP verification failed';
+      }
+    });
+  }
+
+  loginResendOtp(): void {
+    this.loginOtpCode = '';
+    this.loginError = '';
+    this.loginOtpMessage = '';
+    this.loginLoading = true;
+
+    this.authService.sendOtp(this.loginUserEmail).subscribe({
+      next: () => {
+        this.loginLoading = false;
+        this.loginOtpMessage = 'OTP resent to ' + this.maskEmail(this.loginUserEmail);
+        this.startLoginOtpTimer();
+      },
+      error: () => {
+        this.loginLoading = false;
+        this.loginError = 'Failed to resend OTP';
+      }
+    });
+  }
+
+  loginBackToCredentials(): void {
+    this.loginStep = 'credentials';
+    this.loginOtpCode = '';
+    this.loginError = '';
+    this.loginOtpMessage = '';
+    this.storedLoginResponse = null;
+    this.loginUserEmail = '';
+    this.stopLoginOtpTimer();
+  }
+
+  maskEmail(email: string): string {
+    if (!email) return '';
+    const [name, domain] = email.split('@');
+    if (name.length <= 2) return email;
+    return name.substring(0, 2) + '****@' + domain;
+  }
+
+  startLoginOtpTimer(): void {
+    this.stopLoginOtpTimer();
+    this.loginOtpTimer = 60;
+    this.loginOtpTimerInterval = setInterval(() => {
+      this.loginOtpTimer--;
+      if (this.loginOtpTimer <= 0) this.stopLoginOtpTimer();
+    }, 1000);
+  }
+
+  stopLoginOtpTimer(): void {
+    if (this.loginOtpTimerInterval) {
+      clearInterval(this.loginOtpTimerInterval);
+      this.loginOtpTimerInterval = null;
+    }
+    this.loginOtpTimer = 0;
+  }
+
+  // Forgot password (unchanged)
   showForgot(): void { this.forgotMode = true; this.forgotStep = 'email'; this.resetForgotState(); }
   backToLogin(): void { this.forgotMode = false; this.resetForgotState(); }
 
@@ -194,18 +312,6 @@ export class LoginComponent implements OnDestroy {
       this.forgotOtpTimerInterval = null;
     }
     this.forgotOtpTimer = 0;
-  }
-
-  checkForgotPasswordRules(): void {
-    this.forgotPasswordTouched = true;
-    const p = this.forgotNewPassword || '';
-    this.forgotPasswordRules = {
-      minLength: p.length >= 8,
-      uppercase: /[A-Z]/.test(p),
-      lowercase: /[a-z]/.test(p),
-      number: /[0-9]/.test(p),
-      special: /[!@#$%^&*]/.test(p)
-    };
   }
 
   get forgotPassedRules(): number {

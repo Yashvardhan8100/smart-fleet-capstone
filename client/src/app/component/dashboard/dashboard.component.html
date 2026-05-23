@@ -11,9 +11,9 @@
     {{ errorMessage }}
   </div>
 
-  <!-- ============================================ -->
+     
   <!-- DRIVER ROLE — Premium Driver Dashboard       -->
-  <!-- ============================================ -->
+     
   <div *ngIf="role === 'DRIVER'" class="driver-dashboard">
 
     <!-- Driver Profile + Clock Row -->
@@ -141,9 +141,9 @@
 
   </div>
 
-  <!-- ============================================ -->
+     
   <!-- ADMIN + FLEET_MANAGER — Vehicle Cards        -->
-  <!-- ============================================ -->
+     
   <div class="summary-grid" *ngIf="role === 'ADMIN' || role === 'FLEET_MANAGER'">
 
     <div class="summary-card card-blue">
@@ -212,9 +212,9 @@
 
   </div>
 
-  <!-- ============================================ -->
+     
   <!-- MECHANIC — Maintenance Cards Only            -->
-  <!-- ============================================ -->
+     
   <div class="summary-grid" *ngIf="role === 'MECHANIC'">
 
     <div class="summary-card card-orange">
@@ -251,9 +251,9 @@
 
   </div>
 
-  <!-- ============================================ -->
+     
   <!-- Alert Section — Role Based                   -->
-  <!-- ============================================ -->
+     
   <div class="alert-section" *ngIf="role === 'ADMIN' || role === 'MECHANIC'">
 
     <div class="info-card maintenance-alert" *ngIf="role === 'ADMIN' || role === 'MECHANIC'">
@@ -276,9 +276,9 @@
 
   </div>
 
-  <!-- ============================================ -->
+     
   <!-- Quick Actions — Role Based                   -->
-  <!-- ============================================ -->
+     
   <div class="quick-actions" *ngIf="role !== 'DRIVER'">
 
     <h3>Quick Actions</h3>

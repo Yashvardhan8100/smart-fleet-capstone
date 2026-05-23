@@ -88,4 +88,15 @@ public class DriverController {
 
           return ResponseEntity.ok(driverService.updateStatusByName(driverName, status));
      }
+
+     // PUT /api/drivers/my-profile?driverName=vivek
+@PutMapping("/my-profile")
+public ResponseEntity<DriverDTO> updateMyProfile(
+        @RequestParam String driverName,
+        @RequestBody Driver updated) {
+
+    return ResponseEntity.ok(
+        driverService.updateProfileByName(driverName, updated));
+}
+
 }

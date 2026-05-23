@@ -169,4 +169,19 @@ public class DriverService {
 
         return mapToDTO(driverRepository.save(driver));
     }
+
+    public DriverDTO updateProfileByName(String driverName, Driver updated) {
+        List<Driver> drivers = driverRepository.findByNameIgnoreCase(driverName);
+        if (drivers.isEmpty())
+            throw new ResourceNotFoundException("Driver not found");
+
+        Driver driver = drivers.get(0);
+
+        // Only allow safe fields — driver cannot change their own licenseNumber
+        driver.setAddress(updated.getAddress());
+        driver.setPhoneNumber(updated.getPhoneNumber());
+
+        return mapToDTO(driverRepository.save(driver));
+    }
+
 }
